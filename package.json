@@ -1,11 +1,23 @@
 {
   "name": "my_task_back",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.1",
+  "description": "API used by my_task_front",
+  "author": 
+    {
+      "name": "James ABIB, Ronan KIELT, Charles CRETOIS",
+      "email": "jabib@myges.fr",
+      "url": ""
+    },
   "private": true,
   "license": "UNLICENSED",
+  "tags": [
+    "nestjs",
+    "my_task",
+    "api",
+    "back"
+  ],
   "scripts": {
+    "start:dev": "nest start --watch",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -23,6 +35,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/swagger": "^6.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
