@@ -8,7 +8,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule);
   const config: ConfigService = app.get(ConfigService);
-  const port: number = config.get<number>('PORT');
+  const port: number = config.get<number>('PORT') ||  Number.parseInt(process.env.npm_config_port) || 3000;
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
 
@@ -24,7 +24,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, configSwagger.build())
   SwaggerModule.setup('api', app, document);
-  await app.listen(process.env.npm_config_port || 3000, () => {
+  await app.listen(port, () => {
     new Logger('NestApplication').log(`Server is running on : http://localhost:` + port);
   });
 }
