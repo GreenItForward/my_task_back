@@ -15,10 +15,13 @@ export class AuthService {
 
   public async register(body: RegisterDto): Promise<User | never> {
     const { name, email, password }: RegisterDto = body;
-    let user: User = await this.repository.findOneBy({ email })
+    let user: User = await this.repository.findOneBy({ email });
 
     if (user) {
-      throw new HttpException(`User with email ${email} already exists`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `User with email ${email} already exists`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     user = new User();
@@ -38,7 +41,10 @@ export class AuthService {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
     }
 
-    const isPasswordValid: boolean = this.helper.isPasswordValid(password, user.password);
+    const isPasswordValid: boolean = this.helper.isPasswordValid(
+      password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
