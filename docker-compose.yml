@@ -3,14 +3,14 @@ services:
     db:
         image: postgres:latest
         environment:
-          POSTGRES_DB: ${PGDATABASE}
-          POSTGRES_USER: ${PGUSER}
-          PO²STGRES_PASSWORD: ${PGPASSWORD}
-          POSTGRES_HOST: ${PGHOST}
+          POSTGRES_DB: ${DATABASE_NAME}
+          POSTGRES_USER: ${DATABASE_USER}
+          POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+          POSTGRES_HOST: ${DATABASE_HOST}
         ports:
-            - ${PGPORT}:5432
+            - ${DATABASE_PORT}:5432
         env_file:
-          - .env
+          - src/common/envs/development.env
         volumes:
             - pg-data:/var/lib/postgresql/data
             - ./postgresql.conf:/etc/postgresql/postgresql.conf
