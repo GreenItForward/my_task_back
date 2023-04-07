@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/user/auth/auth.module';
 
-const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
+const envFilePath: string = getEnvPath(`${process.cwd()}`);
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
@@ -16,5 +16,5 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     UserModule,
     AuthModule,
   ],
-})
+}) 
 export class AppModule {}
