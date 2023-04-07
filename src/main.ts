@@ -9,12 +9,14 @@ async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule);
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('PORT') ||  Number.parseInt(process.env.npm_config_port) || 3000;
+  
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
-
+  
   const packageJson = require('../package.json');
+  
   app.enableCors();
   app.enableVersioning();
+  
   const configSwagger = new DocumentBuilder()
     .setTitle(packageJson.name)
     .setDescription(packageJson.description)
@@ -27,5 +29,6 @@ async function bootstrap() {
   await app.listen(port, () => {
     new Logger('NestApplication').log(`Server is running on : http://localhost:` + port);
   });
+  
 }
 bootstrap();
