@@ -9,6 +9,7 @@ export class Status extends BaseEntity {
   @Column({
     type: 'enum',
     enum: StatusEnum,
+    unique: true,
   })
   nom: StatusEnum;
 }
