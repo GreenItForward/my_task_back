@@ -30,9 +30,9 @@ export class ProjectController {
         const project = new Project();
         project.nom = body.nom;
         project.description = body.description;
-        project.codeJoin = body.codeJoin;
+        project.codeJoin = await this.service.generateCodeJoin();
         project.user = await this.userService.getUserById(body.userId);
-        console.log(project)
+
         return this.service.create(project); 
 
     }

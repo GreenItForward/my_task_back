@@ -24,5 +24,13 @@ export class ProjectService {
     return this.repository.save(project);
   }
 
-  
+  public async generateCodeJoin(): Promise<string> {
+    const length = 6;
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const allProjects = await this.getAll();
+    const allCodes = allProjects.map((project) => project.codeJoin);
+    let result = '';
+    for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return allCodes.includes(result) ? this.generateCodeJoin() : result;
+  }
 }
