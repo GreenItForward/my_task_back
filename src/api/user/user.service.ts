@@ -17,4 +17,9 @@ export class UserService {
 
     return this.repository.save(user);
   }
+
+  public async getUserById(id: number): Promise<User> {
+    return await this.repository.findOneBy({ id });
+  }
+
 }
