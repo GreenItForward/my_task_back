@@ -1,32 +1,27 @@
 import { User } from '@/api/user/user.entity';
-import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Project } from '../project.entity';
+import { Task } from './task/task.entity';
 
 @Entity()
-export class Task extends BaseEntity {
+export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
   @Column()
-  titre: string;
+  nom: string;
 
   @Column()
   description: string;
 
   @Column()
-  date: Date;
+  codeJoin: string;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.projects)
   user: User;
-
-  @OneToMany(() => Task, (task) => task.user)
-  tasks: Task[];
-
-  @ManyToOne(() => Project, (project) => project.tasks)
-  project: Project;
 
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];
 
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 }
