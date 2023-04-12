@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { Request } from 'express';
 
 import { Task } from './task.entity';
@@ -13,5 +13,11 @@ export class TaskService {
   public async getAll(): Promise<Task[]> {
     return this.repository.find();
   }
+
+  public async findOneById(id: string): Promise<Task> {
+      const options: FindOneOptions<Task> = { where: { id: id } };
+      return this.repository.findOne(options);
+  }
+
   
 }

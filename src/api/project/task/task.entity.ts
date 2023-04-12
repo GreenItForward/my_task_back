@@ -2,6 +2,7 @@ import { User } from '@/api/user/user.entity';
 import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project.entity';
+import { ProjectLabel } from '../project-label/projectLabel.entity';
 
 @Entity()
 export class Task extends BaseEntity {
@@ -29,4 +30,6 @@ export class Task extends BaseEntity {
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];
 
+  @OneToMany(() => ProjectLabel, (projectLabel) => projectLabel.task)
+  projectLabels: ProjectLabel[];
 }
