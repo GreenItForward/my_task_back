@@ -8,8 +8,10 @@ import { StatusEnum } from './status.enum';
 
 @Injectable()
 export class StatusService {
-  @InjectRepository(Status)
-  private readonly repository: Repository<Status>;
+
+  constructor(@InjectRepository(Status) private readonly repository: Repository<Status>) {
+    this.checkAndInsertMissingStatus(); 
+  }
 
   public async checkAndInsertMissingStatus(): Promise<void> {
     const status = await this.repository.find();

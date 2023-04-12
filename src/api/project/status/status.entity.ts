@@ -1,12 +1,9 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Entity, PrimaryColumn } from 'typeorm';
 import { StatusEnum } from './status.enum';
 
 @Entity('status')
 export class Status extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: string;
-
-  @Column({
+  @PrimaryColumn({
     type: 'enum',
     enum: StatusEnum,
     unique: true,
