@@ -8,7 +8,7 @@ import {
   import { Label } from '../label/label.entity';
   
   @Entity()
-  export class ProjectLabel {
+  export class TaskLabel {
     @PrimaryGeneratedColumn()
     id: number;
   

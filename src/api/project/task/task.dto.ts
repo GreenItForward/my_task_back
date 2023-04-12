@@ -1,20 +1,24 @@
-import { IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
-  readonly title: string;
+  @ApiProperty()
+  public readonly title: string;
 
   @IsString()
-  readonly description: string;
+  @ApiProperty()
+  public readonly description: string;
 
   @IsString()
-  readonly date: string;
+  @ApiProperty()
+  public readonly status: string;
 
-  @IsString()
-  readonly status: string;
+  @IsNumber()
+  @ApiProperty()
+  public readonly user: number;
 
-  @IsString()
-  readonly user: string;
-
-
+  @IsNumber()
+  @ApiProperty()
+  public readonly project: number;
 }

@@ -6,6 +6,10 @@ import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/user/auth/auth.module';
+import { TaskModule } from './api/project/task/task.module';
+import { StatusModule } from './api/project/status/status.module';
+import { LabelModule } from './api/project/label/label.module';
+import { TaskLabelModule } from './api/project/task-label/projectLabel.module';
 
 const envFilePath: string = getEnvPath(`${process.cwd()}`);
 @Module({
@@ -15,6 +19,10 @@ const envFilePath: string = getEnvPath(`${process.cwd()}`);
     ApiModule,
     UserModule,
     AuthModule,
+    TaskModule,
+    StatusModule,
+    LabelModule,
+    TaskLabelModule
   ],
 }) 
 export class AppModule {}

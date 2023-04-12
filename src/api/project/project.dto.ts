@@ -1,16 +1,17 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()
   @IsNotEmpty()
-  readonly nom: string;
+  @ApiProperty()
+  public readonly nom: string;
 
   @IsString()
-  readonly description: string;
+  @ApiProperty()
+  public readonly description: string;
 
-  @IsString()
-  readonly codeJoin: string;
-
-  readonly userId: number;
+  @ApiProperty()
+  public readonly userId: number;
 
 }

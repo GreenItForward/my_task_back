@@ -13,7 +13,7 @@ import { User } from '../user/user.entity';
 @Entity()
 export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   nom: string;
@@ -35,4 +35,5 @@ export class Project extends BaseEntity {
 
   @OneToMany(() => Label, (label) => label.project)
   labels: Label[];
+  
 }

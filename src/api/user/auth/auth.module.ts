@@ -22,6 +22,6 @@ import { ConfigService } from '@nestjs/config';
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthHelper, JwtStrategy],
+  providers: [AuthService, AuthHelper, JwtStrategy]
 })
 export class AuthModule {}
