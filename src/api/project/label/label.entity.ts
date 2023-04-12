@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../project.entity';
-import { ProjectLabel } from '../project-label/projectLabel.entity';
+import { TaskLabel } from '../task-label/projectLabel.entity';
 
 @Entity()
 export class Label extends BaseEntity {
@@ -25,6 +25,6 @@ export class Label extends BaseEntity {
   @JoinColumn({ name: 'projectId' })
   project: Project;
 
-  @OneToMany(() => ProjectLabel, (projectLabel) => projectLabel.label)
-  projectLabels: ProjectLabel[];
+  @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.label)
+  projectLabels: TaskLabel[];
 }

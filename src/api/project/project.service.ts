@@ -14,9 +14,6 @@ export class ProjectService {
   }
 
   public async create(project: Project): Promise<Project> {
-
-
-
     return this.repository.save(project);
   }
 
@@ -33,4 +30,9 @@ export class ProjectService {
     for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return allCodes.includes(result) ? this.generateCodeJoin() : result;
   }
+
+  public async getProjectById(id: number): Promise<Project> {
+    return await this.repository.findOneBy({ id });
+  }
+
 }

@@ -7,6 +7,7 @@ import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
 import { userInfo } from 'os';
 import { UserService } from '../user/user.service';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('project')
 export class ProjectController {
@@ -26,6 +27,7 @@ export class ProjectController {
     @Post()
    // @UseGuards(JwtAuthGuard)
    //  @UseInterceptors(ClassSerializerInterceptor)
+    @ApiBody({ type: CreateProjectDto })
     private async create(@Body() body: CreateProjectDto): Promise<Project> {
         const project = new Project();
         project.nom = body.nom;

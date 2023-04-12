@@ -2,12 +2,12 @@ import { User } from '@/api/user/user.entity';
 import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project.entity';
-import { ProjectLabel } from '../project-label/projectLabel.entity';
+import { TaskLabel } from '../task-label/projectLabel.entity';
 
 @Entity()
 export class Task extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   titre: string;
@@ -30,6 +30,6 @@ export class Task extends BaseEntity {
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];
 
-  @OneToMany(() => ProjectLabel, (projectLabel) => projectLabel.task)
-  projectLabels: ProjectLabel[];
+  @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task)
+  projectLabels: TaskLabel[];
 }
