@@ -8,7 +8,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule);
   const config: ConfigService = app.get(ConfigService);
-  const port: number = config.get<number>('PORT') ||  Number.parseInt(process.env.npm_config_port) || 3000;
+  const port: number = Number.parseInt(process.env.npm_config_port) || config.get<number>('PORT')  || 3000;
   
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   
