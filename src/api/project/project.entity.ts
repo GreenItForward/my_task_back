@@ -1,6 +1,14 @@
-import { User } from '@/api/user/user.entity';
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Task } from './task/task.entity';
+import { Label } from './label/label.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Project extends BaseEntity {
@@ -24,4 +32,7 @@ export class Project extends BaseEntity {
 
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
+
+  @OneToMany(() => Label, (label) => label.project)
+  labels: Label[];
 }

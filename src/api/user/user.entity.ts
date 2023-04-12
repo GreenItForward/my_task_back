@@ -27,4 +27,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Project , (project) => project.user)
   projects: Project[];
+
+  @OneToMany(() => Task, (task) => task.user)
+  labels: Task[];
 }
