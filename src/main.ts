@@ -21,6 +21,7 @@ async function bootstrap() {
     .setTitle(packageJson.name)
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
+    .addBearerAuth()
     .setContact(packageJson.author.name, packageJson.author.url, packageJson.author.email)
   packageJson.tags.forEach((tag: { name: string; description: string; }) => configSwagger.addTag(tag.name, tag.description));
 
