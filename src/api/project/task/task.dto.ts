@@ -17,9 +17,5 @@ export class CreateTaskDto {
 
   @IsNumber()
   @ApiProperty( { required: true } )
-  public readonly user: number;
-
-  @IsNumber()
-  @ApiProperty( { required: true } )
-  public readonly project: number;
+  public readonly projectID: number;
 }

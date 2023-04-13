@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Request } from 'express';
@@ -8,6 +8,8 @@ import { CreateTaskDto } from './task.dto';
 import { User } from '@/api/user/user.entity';
 import { UserService } from '@/api/user/user.service';
 import { ProjectService } from '../project.service';
+import { Project } from '../project.entity';
+import { StatusEnum } from '@/common/enums/status.enum';
 
 @Injectable()
 export class TaskService {
@@ -19,9 +21,6 @@ export class TaskService {
     private readonly repository: Repository<Task>
   ) {}
 
-
-
-
   public async getAll(): Promise<Task[]> {
     return this.repository.find();
   }
@@ -30,14 +29,29 @@ export class TaskService {
     return this.repository.findOneBy({ id })
   }
 
-  public async create(task: CreateTaskDto): Promise<Task> {
+  public async create(task: CreateTaskDto, req: Request): Promise<Task> {
     const newTask = new Task();
+    const project = await this.projectService.getProjectById(task.projectID);
+    const user: User = <User>req.user;
+    const userId = await this.userService.getIdbyUser(project.user);
+
     newTask.titre = task.title;
     newTask.description = task.description;
     newTask.date = new Date();
-    newTask.user = await this.userService.getUserById(task.user);
-    newTask.project = await this.projectService.getProjectById(task.project);
+    newTask.user = user;
+    newTask.project = project;
 
+    for(const status in StatusEnum) {
+      if (StatusEnum[status] === task.status) {
+        newTask.status = StatusEnum[status];
+      }
+    }
+
+    if (userId !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour créer une tâche dans ce projet.');
+    }
+
+    await this.projectService.getProjectById(task.projectID);
     return this.repository.save(newTask);
   }
 
