@@ -19,7 +19,6 @@ export class Task extends BaseEntity {
   @Column()
   date: Date;
 
-  // Ajout de la colonne statut en utilisant l'énumération StatusEnum
   @Column({
     type: 'enum',
     enum: StatusEnum,

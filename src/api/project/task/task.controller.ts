@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './task.dto';
+import { ApiBadRequestResponse, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('task')
 export class TaskController {
@@ -19,6 +20,9 @@ export class TaskController {
     }
 
     @Post()
+    @ApiBody({ type: CreateTaskDto })
+    @ApiBadRequestResponse({ description: 'Create task failed' })
+    @ApiOkResponse({ description: 'Create task success' })
   //  @UseGuards(JwtAuthGuard)
   //  @UseInterceptors(ClassSerializerInterceptor)
     private create( @Body() task:CreateTaskDto): Promise<Task> {
