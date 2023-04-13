@@ -23,8 +23,8 @@ export class TaskController {
     @ApiBody({ type: CreateTaskDto })
     @ApiBadRequestResponse({ description: 'Create task failed' })
     @ApiOkResponse({ description: 'Create task success' })
-  //  @UseGuards(JwtAuthGuard)
-  //  @UseInterceptors(ClassSerializerInterceptor)
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
     private create( @Body() task:CreateTaskDto): Promise<Task> {
         return this.service.create(task);
     }

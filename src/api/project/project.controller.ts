@@ -7,8 +7,10 @@ import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
 import { userInfo } from 'os';
 import { UserService } from '../user/user.service';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { User } from '../user/user.entity';
 
+@ApiTags('Project')
 @Controller('project')
 export class ProjectController {
     @Inject(ProjectService)
@@ -25,18 +27,12 @@ export class ProjectController {
     }
 
     @Post()
-   // @UseGuards(JwtAuthGuard)
-   //  @UseInterceptors(ClassSerializerInterceptor)
+    @ApiBearerAuth()
     @ApiBody({ type: CreateProjectDto })
-    private async create(@Body() body: CreateProjectDto): Promise<Project> {
-        const project = new Project();
-        project.nom = body.nom;
-        project.description = body.description;
-        project.codeJoin = await this.service.generateCodeJoin();
-        project.user = await this.userService.getUserById(body.userId);
-
-        return this.service.create(project); 
-
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async create(@Body() body:CreateProjectDto, @Req() req: Request ): Promise<Project> {
+        return this.service.create(body, req); 
     }
    
 }

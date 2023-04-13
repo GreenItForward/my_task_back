@@ -1,11 +1,12 @@
-import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, UseGuards, Req, Header } from '@nestjs/common';
 import { User } from '@/api/user/user.entity';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { JwtAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
-import { ApiBody, ApiOkResponse, ApiBadRequestResponse, ApiBearerAuth, ApiHeader, ApiHeaders } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiBadRequestResponse, ApiBearerAuth, ApiHeader, ApiOperation, ApiConsumes, ApiBasicAuth, ApiResponse, ApiHeaders, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   @Inject(AuthService)
@@ -30,10 +31,14 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiHeader({ name: 'Authorization', description: 'Bearer token' })
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({ status: 201, description: 'The access token has been refreshed.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   private refresh(@Req() { user }: Request): Promise<string | never> {
     return this.service.refresh(<User>user);
   }
+  
 }
