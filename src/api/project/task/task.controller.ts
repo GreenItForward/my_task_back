@@ -4,8 +4,9 @@ import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './task.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Task')
 @Controller('task')
 export class TaskController {
 

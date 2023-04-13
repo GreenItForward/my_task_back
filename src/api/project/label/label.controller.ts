@@ -4,9 +4,10 @@ import { TaskLabelService } from '../task-label/projectLabel.service';
 import { TaskService } from '../task/task.service';
 import { CreateLabelDto } from './label.dto';
 import { Label } from './label.entity';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
-@Controller('labels')
+@ApiTags("Label")
+@Controller('label')
 export class LabelController {
   constructor(
     private readonly labelService: LabelService,
