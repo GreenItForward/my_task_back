@@ -11,7 +11,4 @@ export class CreateProjectDto {
   @ApiProperty()
   public readonly description: string;
 
-  @ApiProperty()
-  public readonly userId: number;
-
 }
