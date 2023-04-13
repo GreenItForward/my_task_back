@@ -1,24 +1,25 @@
+import { StatusEnum } from '@/common/enums/status.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
-  @ApiProperty()
+  @ApiProperty( { required: true } )
   public readonly title: string;
 
   @IsString()
-  @ApiProperty()
+  @ApiProperty( { required: false } )
   public readonly description: string;
 
-  @IsString()
-  @ApiProperty()
+  @IsEnum(StatusEnum)
+  @ApiProperty( { enum: StatusEnum } )
   public readonly status: string;
 
   @IsNumber()
-  @ApiProperty()
+  @ApiProperty( { required: true } )
   public readonly user: number;
 
   @IsNumber()
-  @ApiProperty()
+  @ApiProperty( { required: true } )
   public readonly project: number;
 }

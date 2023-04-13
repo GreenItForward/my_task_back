@@ -3,6 +3,7 @@ import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project.entity';
 import { TaskLabel } from '../task-label/projectLabel.entity';
+import { StatusEnum } from '../../../common/enums/status.enum';
 
 @Entity()
 export class Task extends BaseEntity {
@@ -17,6 +18,13 @@ export class Task extends BaseEntity {
 
   @Column()
   date: Date;
+
+  // Ajout de la colonne statut en utilisant l'énumération StatusEnum
+  @Column({
+    type: 'enum',
+    enum: StatusEnum,
+  })
+  status: StatusEnum;
 
   @ManyToOne(() => User, (user) => user.tasks)
   user: User;
