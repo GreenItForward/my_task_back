@@ -15,13 +15,13 @@ export class Label extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column()
+  @Column( { nullable: false } )
   nom: string;
 
-  @Column()
+  @Column( { nullable: false } )
   couleur: string;
 
-  @ManyToOne(() => Project, (project) => project.labels)
+  @ManyToOne(() => Project, (project) => project.labels, { nullable: false } )
   @JoinColumn({ name: 'projectId' })
   project: Project;
 

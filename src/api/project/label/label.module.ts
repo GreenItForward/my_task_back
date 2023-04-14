@@ -5,12 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Label } from './label.entity';
 import { TaskLabelModule } from '../task-label/projectLabel.module';
 import { TaskModule } from '../task/task.module';
-import { Task } from '../task/task.entity';
-import { TaskLabel } from '../task-label/projectLabel.entity';
 import { ProjectModule } from '../project.module';
+import { UserModule } from '@/api/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Label]), TaskLabelModule, TaskModule, ProjectModule],
+  imports: [TypeOrmModule.forFeature([Label]), TaskLabelModule, TaskModule, ProjectModule, UserModule],
   controllers: [LabelController],
   providers: [LabelService],
 })

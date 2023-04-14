@@ -1,10 +1,12 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { LabelService } from './label.service';
 import { TaskLabelService } from '../task-label/projectLabel.service';
 import { TaskService } from '../task/task.service';
 import { CreateLabelDto } from './label.dto';
 import { Label } from './label.entity';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 
 @ApiTags("Label")
 @Controller('label')
@@ -23,10 +25,13 @@ export class LabelController {
   }
 
   @Post()
+  @ApiBearerAuth()
   @ApiBody({ type: CreateLabelDto })
-  async createLabel(@Body() createLabelDto: CreateLabelDto): Promise<Label> {
-    const label = await this.labelService.create(createLabelDto);
-    const task = await this.taskService.findOneById(createLabelDto.taskId);
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async createLabel(@Body() body: CreateLabelDto, @Req() req: Request): Promise<Label> {
+    const label = await this.labelService.create(body, req);
+    const task = await this.taskService.findOneById(body.taskId);
     await this.projectLabelService.addLabelToTask(task, label);
 
     return label;
