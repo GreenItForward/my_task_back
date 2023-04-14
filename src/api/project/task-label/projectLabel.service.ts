@@ -17,6 +17,10 @@ export class TaskLabelService {
     taskLabel.task = task;
     taskLabel.label = label;
 
+    if (task.project.id !== label.project.id) {
+      throw new Error('Le label n\'est pas dans le même projet que la tâche');
+    }
+
     return await this.projectLabelRepository.save(taskLabel);
   }
-}
+} 
