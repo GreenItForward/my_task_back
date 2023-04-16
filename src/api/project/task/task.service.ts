@@ -20,7 +20,7 @@ export class TaskService {
     private readonly repository: Repository<Task>
   ) {}
 
-  public async getAll(): Promise<Task[]> {
+  public async getAll(): Promise<Task[]> {    
     return this.repository.find();
   }
 
@@ -37,25 +37,19 @@ export class TaskService {
   public async create(task: CreateTaskDto, req: Request): Promise<Task> {
     const newTask = new Task();
     const project = await this.projectService.getProjectById(task.projectID);
-    const user: User = <User>req.user;
-    const userId = await this.userService.getIdbyUser(project.user);
+    const user: User = <User> req.user;
+    const ownerId = await this.userService.getIdbyUser(project.user);
+
+    if (ownerId !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour créer une tâche dans ce projet.');
+    }
 
     newTask.titre = task.title;
     newTask.description = task.description;
     newTask.date = new Date();
     newTask.user = user;
     newTask.project = project;
-
-    for(const status in StatusEnum) {
-      if (StatusEnum[status] === task.status) {
-        newTask.status = StatusEnum[status];
-      }
-    }
-
-    if (userId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour créer une tâche dans ce projet.');
-    }
-
+    newTask.status= task.status as StatusEnum;
     await this.projectService.getProjectById(task.projectID);
     return this.repository.save(newTask);
   }

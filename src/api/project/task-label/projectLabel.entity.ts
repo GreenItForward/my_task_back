@@ -16,7 +16,7 @@ import {
     @JoinColumn({ name: 'taskId' })
     task: Task;
   
-    @ManyToOne(() => Label, (label) => label.projectLabels, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Label, (label) => label.taskLabels, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'labelId' })
     label: Label;
   }
