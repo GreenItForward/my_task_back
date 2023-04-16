@@ -14,9 +14,5 @@ export class CreateLabelDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  taskId: number;
-
-  @IsNotEmpty()
-  @ApiProperty()
   projectId: number; 
 }

@@ -31,9 +31,7 @@ export class LabelController {
   @UseInterceptors(ClassSerializerInterceptor)
   async createLabel(@Body() body: CreateLabelDto, @Req() req: Request): Promise<Label> {
     const label = await this.labelService.create(body, req);
-    const task = await this.taskService.findOneById(body.taskId);
-    await this.projectLabelService.addLabelToTask(task, label);
 
     return label;
-  }
+  }  
 }
