@@ -1,6 +1,6 @@
 {
   "name": "my_task_back",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "API used by my_task_front",
   "author": {
     "name": "James ABIB, Ronan KIELT, Charles CRETOIS",
@@ -47,7 +47,7 @@
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.13"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -55,7 +55,7 @@
     "@nestjs/testing": "^9.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "29.2.4",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.15.11",
     "@types/passport-jwt": "^3.0.8",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

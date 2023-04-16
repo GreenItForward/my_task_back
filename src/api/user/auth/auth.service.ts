@@ -49,9 +49,11 @@ export class AuthService {
     return this.helper.generateToken(user);
   }
 
-  public async refresh(user: User): Promise<string> {
+  public async refresh(user: User): Promise<string> {    
+
     this.repository.update(user.id, { lastLoginAt: new Date() });
 
     return this.helper.generateToken(user);
   }
+  
 }
