@@ -3,6 +3,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 
 export class CreateTaskDto {
+  @IsNumber()
+  @ApiProperty( { required: false } )
+  public readonly id: number;
+  
   @IsString()
   @ApiProperty( { required: true } )
   public readonly title: string;

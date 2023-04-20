@@ -30,5 +30,17 @@ export class TaskController {
     private create( @Body() task:CreateTaskDto, @Req() req: Request ): Promise<Task> {
         return this.service.create(task, req);
     }
+
+    // edit a task
+    @Put()
+    @ApiBearerAuth()
+    @ApiBody({ type: CreateTaskDto })
+    @ApiBadRequestResponse({ description: 'Edit task failed' })
+    @ApiOkResponse({ description: 'Edit task success' })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private edit( @Body() task:CreateTaskDto, @Req() req: Request ): Promise<Task> {
+        return this.service.edit(task, req);
+    }
   
 }

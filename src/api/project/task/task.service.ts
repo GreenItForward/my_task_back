@@ -12,7 +12,6 @@ import { StatusEnum } from '@/common/enums/status.enum';
 
 @Injectable()
 export class TaskService {
-
   constructor(
     private readonly userService: UserService,
     private readonly projectService: ProjectService,
@@ -52,6 +51,30 @@ export class TaskService {
     newTask.status= task.status as StatusEnum;
     await this.projectService.getProjectById(task.projectID);
     return this.repository.save(newTask);
+  }
+
+  public async edit(task: CreateTaskDto, req: Request): Promise<Task> {
+    const taskId = task.id;
+    const existingTask = await this.repository.findOneBy({ id: taskId });
+  
+    if (!existingTask) {
+      throw new NotFoundException('Tâche introuvable');
+    }
+
+    const project = await this.projectService.getProjectById(task.projectID);
+    const user: User = <User> req.user;
+    const ownerId = await this.userService.getIdbyUser(project.user);
+  
+    if (ownerId !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour modifier cette tâche.');
+    }
+  
+    existingTask.titre = task.title;
+    existingTask.description = task.description;
+    existingTask.date = new Date();
+    existingTask.status = task.status as StatusEnum;
+  
+    return this.repository.save(existingTask);
   }
 
 }
