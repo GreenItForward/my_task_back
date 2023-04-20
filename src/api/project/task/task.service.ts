@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Request } from 'express';
 
 import { Task } from './task.entity';
-import { CreateTaskDto } from './task.dto';
+import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { User } from '@/api/user/user.entity';
 import { UserService } from '@/api/user/user.service';
 import { ProjectService } from '../project.service';
@@ -53,7 +53,7 @@ export class TaskService {
     return this.repository.save(newTask);
   }
 
-  public async edit(task: CreateTaskDto, req: Request): Promise<Task> {
+  public async edit(task: UpdateTaskDto, req: Request): Promise<Task> {
     const taskId = task.id;
     const existingTask = await this.repository.findOneBy({ id: taskId });
   
@@ -69,10 +69,11 @@ export class TaskService {
       throw new NotFoundException('Vous n\'avez pas les droits pour modifier cette tâche.');
     }
   
-    existingTask.titre = task.title;
-    existingTask.description = task.description;
+    existingTask.titre = task.title ? task.title : existingTask.titre;
+    existingTask.description = task.description ? task.description : existingTask.description;
     existingTask.date = new Date();
     existingTask.status = task.status as StatusEnum;
+    existingTask.deadline = task.deadline ? task.deadline : existingTask.deadline;
   
     return this.repository.save(existingTask);
   }

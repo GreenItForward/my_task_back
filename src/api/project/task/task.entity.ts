@@ -25,6 +25,9 @@ export class Task extends BaseEntity {
   })
   status: StatusEnum;
 
+  @Column({ nullable: true })
+  deadline: Date;
+
   @ManyToOne(() => User, (user) => user.tasks)
   user: User;
 
