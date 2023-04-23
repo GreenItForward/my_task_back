@@ -1,3 +1,4 @@
+import packageJson from '../package.json';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -12,8 +13,6 @@ async function bootstrap() {
   
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   
-  const packageJson = require('../package.json');
-  
   app.enableCors();
   app.enableVersioning();
   
@@ -22,8 +21,7 @@ async function bootstrap() {
     .setDescription(packageJson.description)
     .setVersion(packageJson.version)
     .addBearerAuth()
-    .setContact(packageJson.author.name, packageJson.author.url, packageJson.author.email)
-  packageJson.tags.forEach((tag: { name: string; description: string; }) => configSwagger.addTag(tag.name, tag.description));
+    .setContact(packageJson.author.name, packageJson.author.url, packageJson.author.email);
 
   const document = SwaggerModule.createDocument(app, configSwagger.build())
   SwaggerModule.setup('api', app, document);

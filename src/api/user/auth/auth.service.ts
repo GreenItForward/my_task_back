@@ -35,13 +35,13 @@ export class AuthService {
     const user: User = await this.repository.findOneBy({ email });
 
     if (!user) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      throw new HttpException('That email/username and password combination didn\'t work', HttpStatus.NOT_FOUND);
     }
 
     const isPasswordValid: boolean = this.helper.isPasswordValid(password, user.password);
 
     if (!isPasswordValid) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      throw new HttpException('That email/username and password combination didn\'t work', HttpStatus.NOT_FOUND);
     }
 
     this.repository.update(user.id, { lastLoginAt: new Date() });
