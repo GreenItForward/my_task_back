@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/user/auth/auth.module';
 import { TaskModule } from './api/project/task/task.module';
 import { LabelModule } from './api/project/label/label.module';
-import { TaskLabelModule } from './api/project/task-label/projectLabel.module';
+import { TaskLabelModule } from './api/project/task-label/taskLabel.module';
 
 const envFilePath: string = getEnvPath(`${process.cwd()}`);
 @Module({

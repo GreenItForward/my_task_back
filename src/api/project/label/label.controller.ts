@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { LabelService } from './label.service';
-import { TaskLabelService } from '../task-label/projectLabel.service';
+import { TaskLabelService } from '../task-label/TaskLabel.service';
 import { TaskService } from '../task/task.service';
 import { CreateLabelDto } from './label.dto';
 import { Label } from './label.entity';
