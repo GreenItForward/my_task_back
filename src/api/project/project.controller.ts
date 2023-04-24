@@ -1,11 +1,9 @@
-import { log } from 'console';
-import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Put, Body, Inject, Get, Post } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Body, Inject, Get, Post } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { ProjectService } from './project.service';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
-import { userInfo } from 'os';
 import { UserService } from '../user/user.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';

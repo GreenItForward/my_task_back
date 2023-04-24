@@ -6,4 +6,9 @@ export class UpdateNameDto {
   @IsOptional()
   @ApiProperty()
   public readonly name?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  public readonly firstname?: string;
 }
