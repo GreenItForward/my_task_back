@@ -12,7 +12,7 @@ import {
     @PrimaryGeneratedColumn()
     id: number;
   
-    @ManyToOne(() => Task, (task) => task.projectLabels, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Task, (task) => task.taskLabels, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'taskId' })
     task: Task;
   

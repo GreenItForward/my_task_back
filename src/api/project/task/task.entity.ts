@@ -41,5 +41,5 @@ export class Task extends BaseEntity {
   projects: Project[];
 
   @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task)
-  projectLabels: TaskLabel[];
+  taskLabels: TaskLabel[];
 }
