@@ -1,10 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { TaskLabel } from './taskLabel.entity';
-import { Task } from '../task/task.entity';
-import { Label } from '../label/label.entity';
-import { AddLabelToTaskDto } from './taskLabel.dto';
+import { UpdateLabelToTaskDto } from './taskLabel.dto';
 import { TaskService } from '../task/task.service';
 import { LabelService } from '../label/label.service';
 import { ProjectService } from '../project.service';
@@ -19,7 +17,14 @@ export class TaskLabelService {
    private readonly projectService: ProjectService,
   ) {}
 
-  async addLabelToTask(taskLabel: AddLabelToTaskDto, req: Request): Promise<TaskLabel> { 
+
+/**
+ * Add a label to a task or update it if it already exists ( PUT )
+ * @param taskLabel 
+ * @param req 
+ * @returns 
+ */
+  async updateLabelToTask(taskLabel: UpdateLabelToTaskDto, req: Request): Promise<HttpException> { 
     const newTaskLabel = new TaskLabel();
     const task = await this.taskService.findOneById(taskLabel.taskId);
     if (!task || !task.project) {
@@ -33,6 +38,16 @@ export class TaskLabelService {
       throw new NotFoundException('Le label n\'est pas dans le même projet que la tâche');
     }
 
-    return await this.taskLabelRepository.save(newTaskLabel);
+    const existingTaskLabel = await this.taskLabelRepository.findOne({
+      where: { task: Equal(taskLabel.taskId), label: Equal(taskLabel.labelId) },
+    });
+    
+    if (existingTaskLabel) {
+      await this.taskLabelRepository.delete(existingTaskLabel.id);
+      throw new HttpException("Le label a été retiré de la tâche",HttpStatus.ACCEPTED);
+    }
+    
+    await this.taskLabelRepository.save(newTaskLabel)
+    throw new HttpException("Le label a été ajouté à la tâche",HttpStatus.CREATED);
   }
 } 
