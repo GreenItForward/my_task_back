@@ -23,15 +23,11 @@ export class TaskService {
     return this.repository.find();
   }
 
-  public async findOneById(id: number): Promise<Task> {
-    const task = await this.repository.findOneBy({id});
-
-    if (!task) {
-      throw new NotFoundException('Tâche introuvable');
-    }
-
-    return this.repository.findOneBy({ id })
+  async findOneById(id: number): Promise<Task> {
+    return await this.repository.findOne({ where: { id }, relations: ['project'] });
   }
+  
+
 
   public async create(task: CreateTaskDto, req: Request): Promise<Task> {
     const newTask = new Task();

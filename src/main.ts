@@ -16,6 +16,7 @@ async function bootstrap() {
   
   app.enableCors();
   app.enableVersioning();
+  app.setGlobalPrefix('api');
   
   const configSwagger = new DocumentBuilder()
     .setTitle(packageJson.name)

@@ -1,6 +1,5 @@
 import { Controller, Post, Body, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { LabelService } from './label.service';
-import { TaskLabelService } from '../task-label/projectLabel.service';
 import { TaskService } from '../task/task.service';
 import { CreateLabelDto } from './label.dto';
 import { Label } from './label.entity';
@@ -13,7 +12,6 @@ import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 export class LabelController {
   constructor(
     private readonly labelService: LabelService,
-    private readonly projectLabelService: TaskLabelService,
     private readonly taskService: TaskService,
   ) {}
 

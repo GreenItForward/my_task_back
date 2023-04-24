@@ -8,12 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../project.entity';
-import { TaskLabel } from '../task-label/projectLabel.entity';
+import { TaskLabel } from '../task-label/taskLabel.entity';
 
 @Entity()
 export class Label extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column( { nullable: false } )
   nom: string;

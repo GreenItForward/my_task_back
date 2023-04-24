@@ -2,7 +2,7 @@ import { User } from '@/api/user/user.entity';
 import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project.entity';
-import { TaskLabel } from '../task-label/projectLabel.entity';
+import { TaskLabel } from '../task-label/taskLabel.entity';
 import { StatusEnum } from '../../../common/enums/status.enum';
 
 @Entity()
