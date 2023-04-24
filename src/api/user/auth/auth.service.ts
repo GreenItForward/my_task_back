@@ -13,7 +13,7 @@ export class AuthService {
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
 
-  public async register(body: RegisterDto): Promise<User | never> {
+  public async register(body: RegisterDto): Promise<string | never> {
     const { firstname, name, email, password }: RegisterDto = body;
     let user: User = await this.repository.findOneBy({ email })
 
@@ -27,8 +27,9 @@ export class AuthService {
     user.name = name;
     user.email = email;
     user.password = this.helper.encodePassword(password);
+    await this.repository.save(user);
 
-    return this.repository.save(user);
+    return this.helper.generateToken(user);
   }
 
   public async login(body: LoginDto): Promise<string | never> {
@@ -45,14 +46,14 @@ export class AuthService {
       throw new HttpException('That email/username and password combination didn\'t work', HttpStatus.NOT_FOUND);
     }
 
-    this.repository.update(user.id, { lastLoginAt: new Date() });
+    await this.repository.update(user.id, {lastLoginAt: new Date()});
 
     return this.helper.generateToken(user);
   }
 
   public async refresh(user: User): Promise<string> {    
 
-    this.repository.update(user.id, { lastLoginAt: new Date() });
+    await this.repository.update(user.id, {lastLoginAt: new Date()});
 
     return this.helper.generateToken(user);
   }
