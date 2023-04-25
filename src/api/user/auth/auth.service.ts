@@ -57,5 +57,11 @@ export class AuthService {
 
     return this.helper.generateToken(user);
   }
-  
+
+  public async getUser(token: string): Promise<User | never> {
+    let user = await this.helper.decode(token) as User;
+    const email = user.email;
+    user = await this.repository.findOneBy({ email });
+    return user;
+  }
 }
