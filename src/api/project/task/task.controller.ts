@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
-import { CreateTaskDto } from './task.dto';
+import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Task')
@@ -29,6 +29,18 @@ export class TaskController {
     @UseInterceptors(ClassSerializerInterceptor)
     private create( @Body() task:CreateTaskDto, @Req() req: Request ): Promise<Task> {
         return this.service.create(task, req);
+    }
+
+    // edit a task
+    @Put()
+    @ApiBearerAuth()
+    @ApiBody({ type: UpdateTaskDto })
+    @ApiBadRequestResponse({ description: 'Edit task failed' })
+    @ApiOkResponse({ description: 'Edit task success' })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private edit( @Body() task: UpdateTaskDto, @Req() req: Request ): Promise<Task> {
+        return this.service.edit(task, req);
     }
   
 }

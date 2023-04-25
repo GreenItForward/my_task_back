@@ -50,4 +50,19 @@ export class ProjectService {
     return projectFound;
   }
 
+  public async getIdbyProject(project: Project): Promise<number> {
+    if(!project) { 
+      throw new NotFoundException('Le projet demandé est introuvable.');
+    }
+
+    const foundProject = await this.repository.findOne({ where: { id: project.id } });
+
+    if (!foundProject) {
+      throw new NotFoundException('Le projet demandé est introuvable.');
+    }
+
+    return foundProject.id;
+
+  }
+
 }

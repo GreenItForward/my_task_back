@@ -1,7 +1,7 @@
 import { User } from '@/api/user/user.entity';
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project.entity';
-import { TaskLabel } from '../task-label/projectLabel.entity';
+import { TaskLabel } from '../task-label/taskLabel.entity';
 import { StatusEnum } from '../../../common/enums/status.enum';
 
 @Entity()
@@ -24,6 +24,9 @@ export class Task extends BaseEntity {
   })
   status: StatusEnum;
 
+  @Column({ nullable: true })
+  deadline: Date;
+
   @ManyToOne(() => User, (user) => user.tasks)
   user: User;
 
@@ -37,5 +40,5 @@ export class Task extends BaseEntity {
   projects: Project[];
 
   @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task)
-  projectLabels: TaskLabel[];
+  taskLabels: TaskLabel[];
 }

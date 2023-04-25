@@ -25,7 +25,10 @@ export class LabelService {
     return this.repository.find();
   }
   
-
+  public async findOneById(id: number): Promise<Label> {
+    return await this.repository.findOne({ where: { id }, relations: ['project'] });
+  }
+  
   public async create(createLabelDto: CreateLabelDto, req: Request): Promise<Label> {
     const label = new Label();
     const user: User = <User>req.user;
