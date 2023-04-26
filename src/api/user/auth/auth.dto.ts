@@ -34,9 +34,3 @@ export class LoginDto {
   @ApiProperty()
   public readonly password: string;
 }
-
-export class TokenDto {
-  @IsString()
-  @ApiProperty()
-  public readonly token: string;
-}

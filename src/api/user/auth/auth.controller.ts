@@ -9,7 +9,7 @@ import {
   Req
 } from '@nestjs/common';
 import { User } from '@/api/user/user.entity';
-import {RegisterDto, LoginDto, TokenDto} from './auth.dto';
+import { RegisterDto, LoginDto } from './auth.dto';
 import { JwtAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
@@ -57,8 +57,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiBody({ type: TokenDto })
-  private getUser(@Body() body: TokenDto): Promise<User | never> {
-    return this.service.getUser(body.token);
+  private getUser(@Req() { user }: Request): User {
+    return this.service.getUser(<User>user);
   }
 }
