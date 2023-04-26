@@ -1,4 +1,3 @@
-
 import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Task } from '../project/task/task.entity';

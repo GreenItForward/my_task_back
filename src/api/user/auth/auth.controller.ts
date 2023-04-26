@@ -1,4 +1,13 @@
-import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, UseGuards, Req} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+  UseGuards,
+  Req
+} from '@nestjs/common';
 import { User } from '@/api/user/user.entity';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { JwtAuthGuard } from './auth.guard';
@@ -40,5 +49,15 @@ export class AuthController {
   private refresh(@Req() { user }: Request): Promise<string | never> {
     return this.service.refresh(<User>user);
   }
-  
+
+  @Post('getUser')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Decode token' })
+  @ApiOkResponse({ status: 201, description: 'User has been send.', type: User })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  private getUser(@Req() { user }: Request): User {
+    return this.service.getUser(<User>user);
+  }
 }
