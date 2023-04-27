@@ -24,6 +24,16 @@ export class ProjectController {
         return this.service.getAll();
     }
 
+    // get all projects for a user
+    @Get('user')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    public async getAllByUser(@Req() { user }: Request): Promise<Project[]> {
+        return this.service.getAllByUser(<User>user);
+      }
+      
+
     @Post()
     @ApiBearerAuth()
     @ApiBody({ type: CreateProjectDto })

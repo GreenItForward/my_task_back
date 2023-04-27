@@ -1,15 +1,17 @@
+import { UserService } from '@/api/user/user.service';
+import { User } from '@/api/user/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
-import { User } from '../user/user.entity';
 
 @Injectable()
 export class ProjectService {
   @InjectRepository(Project)
   private readonly repository: Repository<Project>;
+  private readonly userService: UserService;
 
   public async getAll(): Promise<Project[]> {
     return this.repository.find();
@@ -62,7 +64,18 @@ export class ProjectService {
     }
 
     return foundProject.id;
-
   }
+
+  public async getAllByUser(user: User): Promise<Project[]> {
+    const userId = user.id;
+    const projects = await this.repository.find({ where: { user: { id: userId } }, relations: ['user'] });
+  
+    if (!projects || projects.length === 0) {
+      throw new NotFoundException('Aucun projet trouvé.');
+    }
+  
+    return projects;
+  }
+  
 
 }
