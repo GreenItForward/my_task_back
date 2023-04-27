@@ -4,7 +4,7 @@ import { User } from "@/api/user/user.entity";
 import { Role } from "@/api/user/role/role.entity";
 
 @Entity()
-export class ProjectUserRole {
+export class UserProject {
     @PrimaryGeneratedColumn()
     id: number;
 
