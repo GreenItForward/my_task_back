@@ -1,9 +1,8 @@
 import { Exclude } from 'class-transformer';
-import {BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import { Task } from '../project/task/task.entity';
 import { Project } from '../project/project.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import {Role} from "@/api/user/role/role.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -37,7 +36,4 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Project , (project) => project.user)
   projects: Project[];
-
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
 }
