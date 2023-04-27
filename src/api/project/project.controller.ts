@@ -17,14 +17,6 @@ export class ProjectController {
     @Inject(UserService)
     private readonly userService: UserService;
 
-    @Get()
-    @UseGuards(JwtAuthGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
-    private getAll(@Req() { user }: Request): Promise<Project[]> { 
-        return this.service.getAll();
-    }
-
-    // get all projects for a user
     @Get('user')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
@@ -33,14 +25,13 @@ export class ProjectController {
         return this.service.getAllByUser(<User>user);
       }
       
-
     @Post()
     @ApiBearerAuth()
     @ApiBody({ type: CreateProjectDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async create(@Body() body:CreateProjectDto, @Req() req: Request ): Promise<Project> {
-        return this.service.create(body, req); 
+    private async create(@Body() body:CreateProjectDto, @Req() { user }: Request ): Promise<Project> {
+        return this.service.create(body, <User>user); 
     }
    
 }
