@@ -57,5 +57,8 @@ export class AuthService {
 
     return this.helper.generateToken(user);
   }
-  
+
+  public getUser(user: User): User {
+    return user;
+  }
 }
