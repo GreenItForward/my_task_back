@@ -7,6 +7,7 @@ import { CreateProjectDto } from './project.dto';
 import { UserService } from '../user/user.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
+import { Task } from '@/api/project/task/task.entity';
 
 @ApiTags('Project')
 @Controller('project')

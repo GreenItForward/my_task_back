@@ -1,4 +1,16 @@
-import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Put, Body, Inject, Get, Post } from '@nestjs/common';
+import {
+    ClassSerializerInterceptor,
+    Controller,
+    Req,
+    UseGuards,
+    UseInterceptors,
+    Put,
+    Body,
+    Inject,
+    Get,
+    Post,
+    Param
+} from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { TaskService } from './task.service';
@@ -14,10 +26,18 @@ export class TaskController {
     private readonly service: TaskService;
 
     @Get()
-    @UseGuards(JwtAuthGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
     private getAll(@Req() { user }: Request): Promise<Task[]> { 
         return this.service.getAll();
+    }
+
+    @Get(':taskId')
+    private async findOneById(@Param('taskId') taskId:number): Promise<Task> {
+        if(taskId) return await this.service.findOneById(Number(taskId));
+    }
+
+    @Get('project/:projectId')
+    private async findOneByProject(@Param('projectId') projectId:number): Promise<Task[]> {
+        if(projectId) return await this.service.getAllFromProject(projectId)
     }
 
     @Post()
