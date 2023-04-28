@@ -21,8 +21,8 @@ export class LabelService {
 
   ) {}
 
-  public async getAll(): Promise<Label[]> {
-    return this.repository.find();
+  public async getAll(projectID: number, user: User): Promise<Label[]> {
+  return this.repository.find({ where: { project: { id: projectID } }, relations: ['project'] });
   }
   
   public async findOneById(id: number): Promise<Label> {

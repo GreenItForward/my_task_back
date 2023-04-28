@@ -1,11 +1,12 @@
-import { Controller, Post, Body, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor, Param } from '@nestjs/common';
 import { LabelService } from './label.service';
 import { TaskService } from '../task/task.service';
 import { CreateLabelDto } from './label.dto';
 import { Label } from './label.entity';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
+import { User } from '@/api/user/user.entity';
 
 @ApiTags("Label")
 @Controller('label')
@@ -15,13 +16,15 @@ export class LabelController {
     private readonly taskService: TaskService,
   ) {}
 
-  @Get()
-  async getAll(): Promise<Label[]> {
-    console.log('getAll');
-    
-    return this.labelService.getAll();
+  @Get(':projectID')
+  @ApiBearerAuth()
+  @ApiParam({ name: 'projectID', type: 'integer', required: true })
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getAll(@Param('projectID') id: number, @Req() { user }: Request): Promise<Label[]> {
+    return this.labelService.getAll(id, <User>user);
   }
-
+  
   @Post()
   @ApiBearerAuth()
   @ApiBody({ type: CreateLabelDto })
