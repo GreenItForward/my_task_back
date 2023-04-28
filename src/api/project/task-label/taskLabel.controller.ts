@@ -1,9 +1,10 @@
-import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Put, Body, Inject, HttpException, UseFilters} from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Put, Body, Inject, HttpException, UseFilters, Delete, Param} from '@nestjs/common';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TaskLabelService } from './taskLabel.service';
 import { UpdateLabelToTaskDto } from './taskLabel.dto';
-import { TaskLabel } from './taskLabel.entity';
+import { Request } from 'express';
+import { User } from '@/api/user/user.entity';
 
 @ApiTags('Task Label')
 @Controller('task-label')
@@ -19,8 +20,8 @@ export class TaskLabelController {
     @ApiOkResponse({ description: 'Create task label success' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private updateLabelToTask( @Body() taskLabel:UpdateLabelToTaskDto, @Req() req: Request ): Promise<HttpException> {
-        return this.service.updateLabelToTask(taskLabel, req);
+    private updateLabelToTask( @Body() taskLabel:UpdateLabelToTaskDto, @Req() { user }: Request ): Promise<HttpException> {
+        return this.service.updateLabelToTask(taskLabel, <User>user);
     }
   
 }

@@ -6,6 +6,8 @@ import { UpdateLabelToTaskDto } from './taskLabel.dto';
 import { TaskService } from '../task/task.service';
 import { LabelService } from '../label/label.service';
 import { ProjectService } from '../project.service';
+import { User } from '@/api/user/user.entity';
+import { join } from 'path';
 
 @Injectable()
 export class TaskLabelService {
@@ -24,7 +26,7 @@ export class TaskLabelService {
  * @param req 
  * @returns 
  */
-  async updateLabelToTask(taskLabel: UpdateLabelToTaskDto, req: Request): Promise<HttpException> { 
+  async updateLabelToTask(taskLabel: UpdateLabelToTaskDto, user: User): Promise<HttpException> { 
     const newTaskLabel = new TaskLabel();
     const task = await this.taskService.findOneById(taskLabel.taskId);
     if (!task || !task.project) {
@@ -34,6 +36,11 @@ export class TaskLabelService {
     const label = await this.labelService.findOneById(taskLabel.labelId);
     newTaskLabel.task = task;
     newTaskLabel.label = label;
+
+    if (!label) {
+      throw new NotFoundException("Le label n'existe pas");
+    }
+     
     if (task.project.id !== label.project.id) {
       throw new NotFoundException('Le label n\'est pas dans le même projet que la tâche');
     }
@@ -46,8 +53,14 @@ export class TaskLabelService {
       await this.taskLabelRepository.delete(existingTaskLabel.id);
       throw new HttpException("Le label a été retiré de la tâche",HttpStatus.ACCEPTED);
     }
-    
-    await this.taskLabelRepository.save(newTaskLabel)
+
+    await this.taskLabelRepository.save(newTaskLabel);
     throw new HttpException("Le label a été ajouté à la tâche",HttpStatus.CREATED);
+    
   }
-} 
+
+  async getAllByLabel(id: number) {
+    return this.taskLabelRepository.find({ where: { label: Equal(id) }, relations: ['task'] });
+  }
+
+}  

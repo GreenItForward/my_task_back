@@ -1,13 +1,14 @@
 import { ProjectService } from './../project.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { Request } from 'express';
 
 import { Label } from './label.entity';
 import { CreateLabelDto } from './label.dto';
 import { User } from '@/api/user/user.entity';
 import { UserService } from '@/api/user/user.service';
+import { TaskLabel } from '../task-label/taskLabel.entity';
 
 @Injectable()
 export class LabelService {
@@ -17,7 +18,10 @@ export class LabelService {
     private readonly userService: UserService,
   
     @InjectRepository(Label)
-    private readonly repository: Repository<Label>
+    private readonly repository: Repository<Label>,
+
+    @InjectRepository(TaskLabel)
+    private readonly taskLabelRepository: Repository<TaskLabel>
 
   ) {}
 
@@ -29,9 +33,8 @@ export class LabelService {
     return await this.repository.findOne({ where: { id }, relations: ['project'] });
   }
   
-  public async create(createLabelDto: CreateLabelDto, req: Request): Promise<Label> {
+  public async create(createLabelDto: CreateLabelDto, user: User): Promise<Label> {
     const label = new Label();
-    const user: User = <User>req.user;
     const project = await this.projectService.getProjectById(createLabelDto.projectId);
     const userId = await this.userService.getIdbyUser(project.user);
     label.nom = createLabelDto.nom;
@@ -43,5 +46,23 @@ export class LabelService {
     }
 
     return this.repository.save(label);
+  }
+
+  public async delete(labelId:number, user: User): Promise<HttpException> {
+    const label = await this.findOneById(labelId);
+    
+    if (!label) {
+      throw new NotFoundException('Le label demandé est introuvable.');
+    }
+
+    const labelAssociated = await this.taskLabelRepository.find({ where: { label: Equal(label.id) } });
+
+    labelAssociated.forEach(async (taskLabel) => {
+      await this.taskLabelRepository.delete(taskLabel.id);
+    });
+
+
+    await this.repository.remove(label);
+    return new HttpException('Le label a bien été supprimé.', HttpStatus.OK);
   }
 }
