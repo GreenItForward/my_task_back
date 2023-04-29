@@ -31,12 +31,18 @@ export class TaskController {
     }
 
     @Get(':taskId')
-    private async findOneById(@Param('taskId') taskId:number): Promise<Task> {
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async findOneProjectByTaskId(@Param('taskId') taskId:number): Promise<Task> {
         if(taskId) return await this.service.findOneById(Number(taskId));
     }
 
     @Get('project/:projectId')
-    private async findOneByProject(@Param('projectId') projectId:number): Promise<Task[]> {
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async findTasksByProject(@Param('projectId') projectId:number): Promise<Task[]> {
         if(projectId) return await this.service.getAllFromProject(projectId)
     }
 
@@ -51,7 +57,6 @@ export class TaskController {
         return this.service.create(task, req);
     }
 
-    // edit a task
     @Put()
     @ApiBearerAuth()
     @ApiBody({ type: UpdateTaskDto })
