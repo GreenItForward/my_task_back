@@ -4,9 +4,15 @@ import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {AuthModule} from "@/api/user/auth/auth.module";
 import {UserProjectController} from "@/api/user/user-project/userProject.controller";
 import {UserProjectService} from "@/api/user/user-project/userProject.service";
+import {Project} from "@/api/project/project.entity";
+import {User} from "@/api/user/user.entity";
+import {Role} from "@/api/user/role/role.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserProject]), AuthModule],
+    imports: [
+        TypeOrmModule.forFeature([UserProject, Project, User, Role]),
+        AuthModule,
+    ],
     controllers: [UserProjectController],
     providers: [UserProjectService],
     exports: [UserProjectService],
