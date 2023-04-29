@@ -61,4 +61,9 @@ export class AuthService {
   public getUser(user: User): User {
     return user;
   }
+
+  public async getUserById(userId: number): Promise<User> {
+    return this.repository.findOneBy({ id: userId });
+  }
+  
 }
