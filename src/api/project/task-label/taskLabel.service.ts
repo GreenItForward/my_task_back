@@ -8,6 +8,7 @@ import { LabelService } from '../label/label.service';
 import { ProjectService } from '../project.service';
 import { User } from '@/api/user/user.entity';
 import { join } from 'path';
+import { Label } from '../label/label.entity';
 
 @Injectable()
 export class TaskLabelService {
@@ -63,4 +64,9 @@ export class TaskLabelService {
     return this.taskLabelRepository.find({ where: { label: Equal(id) }, relations: ['task'] });
   }
 
-}  
+  async getAllLabelsOfTask(taskId: number): Promise<Label[]> {
+    const taskLabels = await this.taskLabelRepository.find({ where: { taskId: taskId }, relations: ['label'] });
+    const labels = taskLabels.map((taskLabel) => taskLabel.label);
+    return labels;
+  }
+}

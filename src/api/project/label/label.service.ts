@@ -65,4 +65,25 @@ export class LabelService {
     await this.repository.remove(label);
     return new HttpException('Le label a bien été supprimé.', HttpStatus.OK);
   }
+
+  public async update(labelId: number, createLabelDto: CreateLabelDto, user: User): Promise<Label> {
+    const label = await this.findOneById(labelId);
+
+    if (!label) {
+      throw new NotFoundException('Le label demandé est introuvable.');
+    }
+
+    const project = await this.projectService.getProjectById(createLabelDto.projectId);
+    const userId = await this.userService.getIdbyUser(project.user);
+
+    if (userId !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour modifier ce label.');
+    }
+
+    label.nom = createLabelDto.nom;
+    label.couleur = createLabelDto.couleur;
+    label.project = project;
+
+    return this.repository.save(label);
+  }
 }

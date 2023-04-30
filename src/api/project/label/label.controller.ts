@@ -42,5 +42,15 @@ export class LabelController {
   async deleteLabel(@Param('labelId') labelId: number, @Req() { user }: Request): Promise<HttpException> {    
     return this.labelService.delete(labelId, <User>user);
   }
- 
+
+  @Post(':labelId')
+  @ApiBearerAuth()
+  @ApiBody({ type: CreateLabelDto })
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async updateLabel(@Param('labelId') labelId: number, @Body() body: CreateLabelDto, @Req() { user }: Request): Promise<Label> {
+    const label = await this.labelService.update(labelId, body, <User>user);
+    return label;
+  }
+  
 }
