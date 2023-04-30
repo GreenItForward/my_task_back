@@ -1,11 +1,9 @@
-import { UserService } from '@/api/user/user.service';
 import { User } from '@/api/user/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
-import { User } from '../user/user.entity';
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {RoleEnum} from "@/common/enums/role.enum";
 
@@ -80,7 +78,7 @@ export class ProjectService {
 
   public async getAllByUser(user: User): Promise<Project[]> {
     const userId = user.id;
-    const projects = await this.repository.find({ where: { user: { id: userId } }, relations: ['user'] });
+    const projects = await this.projectRepo.find({ where: { user: { id: userId } }, relations: ['user'] });
   
     if (!projects || projects.length === 0) {
       throw new NotFoundException('Aucun projet trouvé.');
