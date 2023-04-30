@@ -1,14 +1,13 @@
-import { log } from 'console';
-import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Put, Body, Inject, Get, Post } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Body, Inject, Get, Post } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { ProjectService } from './project.service';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
-import { userInfo } from 'os';
 import { UserService } from '../user/user.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
+import { Task } from '@/api/project/task/task.entity';
 
 @ApiTags('Project')
 @Controller('project')
@@ -19,20 +18,21 @@ export class ProjectController {
     @Inject(UserService)
     private readonly userService: UserService;
 
-    @Get()
+    @Get('user')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private getAll(@Req() { user }: Request): Promise<Project[]> { 
-        return this.service.getAll();
-    }
-
+    public async getAllByUser(@Req() { user }: Request): Promise<Project[]> {
+        return this.service.getAllByUser(<User>user);
+      }
+      
     @Post()
     @ApiBearerAuth()
     @ApiBody({ type: CreateProjectDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async create(@Body() body:CreateProjectDto, @Req() req: Request ): Promise<Project> {
-        return this.service.create(body, req); 
+    private async create(@Body() body:CreateProjectDto, @Req() { user }: Request): Promise<Project> {
+        return this.service.create(body, <User>user);
     }
    
 }

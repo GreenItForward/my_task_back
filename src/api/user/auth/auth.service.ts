@@ -13,8 +13,8 @@ export class AuthService {
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
 
-  public async register(body: RegisterDto): Promise<User | never> {
-    const { name, email, password }: RegisterDto = body;
+  public async register(body: RegisterDto): Promise<string | never> {
+    const { firstname, name, email, password }: RegisterDto = body;
     let user: User = await this.repository.findOneBy({ email })
 
     if (user) {
@@ -23,11 +23,13 @@ export class AuthService {
 
     user = new User();
 
+    user.firstname = firstname;
     user.name = name;
     user.email = email;
     user.password = this.helper.encodePassword(password);
+    await this.repository.save(user);
 
-    return this.repository.save(user);
+    return this.helper.generateToken(user);
   }
 
   public async login(body: LoginDto): Promise<string | never> {
@@ -35,25 +37,33 @@ export class AuthService {
     const user: User = await this.repository.findOneBy({ email });
 
     if (!user) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      throw new HttpException('That email/username and password combination didn\'t work', HttpStatus.NOT_FOUND);
     }
 
     const isPasswordValid: boolean = this.helper.isPasswordValid(password, user.password);
 
     if (!isPasswordValid) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      throw new HttpException('That email/username and password combination didn\'t work', HttpStatus.NOT_FOUND);
     }
 
-    this.repository.update(user.id, { lastLoginAt: new Date() });
+    await this.repository.update(user.id, {lastLoginAt: new Date()});
 
     return this.helper.generateToken(user);
   }
 
   public async refresh(user: User): Promise<string> {    
 
-    this.repository.update(user.id, { lastLoginAt: new Date() });
+    await this.repository.update(user.id, {lastLoginAt: new Date()});
 
     return this.helper.generateToken(user);
+  }
+
+  public getUser(user: User): User {
+    return user;
+  }
+
+  public async getUserById(userId: number): Promise<User> {
+    return this.repository.findOneBy({ id: userId });
   }
   
 }
