@@ -2,7 +2,7 @@ import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {Repository} from "typeorm";
-import {JoinDto} from "@/api/user/user-project/userProject.dto";
+import {ChangeRoleDto, JoinDto} from "@/api/user/user-project/userProject.dto";
 import {Project} from "@/api/project/project.entity";
 import {User} from "@/api/user/user.entity";
 import {RoleEnum} from "@/common/enums/role.enum";
@@ -47,6 +47,42 @@ export class UserProjectService {
 
         userProject.project = await this.projectRepo.save(userProject.project);
         userProject.project.codeJoin = await this.projectService.generateCodeJoin();
+        return this.userProjectRepo.save(userProject);
+    }
+
+
+    public async changeRole(body: ChangeRoleDto, user: User): Promise<UserProject | never> {
+        const userProject = new UserProject();
+
+        let role = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.user = :user', { user: user.id })
+            .andWhere('userProject.project = :project', { project: body.projectId })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getOne();
+
+        if(!role) {
+            throw new NotFoundException("Vous n'êtes pas dans ce projet");
+        }
+        if(role.role != RoleEnum.ADMINISTRATEUR) {
+            throw new NotFoundException("Vous n'avez pas les droits pour effectuer cette action");
+        }
+
+        role = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.user = :user', { user: body.userId })
+            .andWhere('userProject.project = :project', { project: body.projectId })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getOne();
+        if(!role) {
+            throw new NotFoundException("L'utilisateur que vous avez spécifié n'est pas dans ce projet");
+        }
+
+        userProject.id = role.id;
+        userProject.project = await this.projectRepo.findOneBy({ "id": body.projectId });
+        userProject.user = await this.userRepo.findOneBy({ "id": body.userId });
+        userProject.role = body.role;
+
         return this.userProjectRepo.save(userProject);
     }
 }

@@ -8,13 +8,13 @@ export class UserProject {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Project)
-    @JoinColumn({ name: 'project_id' })
-    project: Project;
-
     @ManyToOne(() => User)
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    @ManyToOne(() => Project)
+    @JoinColumn({ name: 'project_id' })
+    project: Project;
 
     @Column({
         type: 'enum',
