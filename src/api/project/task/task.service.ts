@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
@@ -23,9 +23,20 @@ export class TaskService {
   }
 
   async findOneById(id: number): Promise<Task> {
-    return await this.repository.findOne({ where: { id }, relations: ['project'] });
+    return await this.repository.findOne({where: {id}, relations: ['project']});
   }
-  
+
+  async deleteOneById(id: number, user: User): Promise<HttpException> {
+    const task = await this.repository.findOne({ where: { id }, relations: ['project'] });
+
+    if (!task) {
+      throw new NotFoundException('Tâche introuvable');
+    }
+    
+    await this.repository.delete(task.id)
+
+    return new HttpException('Tâche supprimée', HttpStatus.OK);
+  }
 
   public async getAllFromProject(project: number): Promise<Task[]>{
     return this.repository

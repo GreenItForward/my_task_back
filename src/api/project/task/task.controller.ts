@@ -9,7 +9,7 @@ import {
     Inject,
     Get,
     Post,
-    Param
+    Param, Delete
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
@@ -17,6 +17,7 @@ import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '@/api/user/user.entity';
 
 @ApiTags('Task')
 @Controller('task')
@@ -34,7 +35,7 @@ export class TaskController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async findOneProjectByTaskId(@Param('taskId') taskId:number): Promise<Task> {
+    private async findOneByTaskId(@Param('taskId') taskId:number): Promise<Task> {
         if(taskId) return await this.service.findOneById(Number(taskId));
     }
 
@@ -67,5 +68,13 @@ export class TaskController {
     private edit( @Body() task: UpdateTaskDto, @Req() req: Request ): Promise<Task> {
         return this.service.edit(task, req);
     }
-  
+
+    @Delete(':taskId')
+    @ApiBearerAuth()
+    @ApiOkResponse({ description: 'Delete task success' })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async deleteOneById(@Param('taskId') taskId:number, @Req() { user } : Request): Promise<void> {
+        await this.service.deleteOneById(Number(taskId), <User>user);
+    }
 }
