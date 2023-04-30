@@ -6,7 +6,9 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   UseGuards,
-  Req
+  Req,
+  Get,
+  Param
 } from '@nestjs/common';
 import { User } from '@/api/user/user.entity';
 import { RegisterDto, LoginDto } from './auth.dto';
@@ -60,4 +62,14 @@ export class AuthController {
   private getUser(@Req() { user }: Request): User {
     return this.service.getUser(<User>user);
   }
+
+  @Get('getUserById/:userId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Decode user by id' })
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  private getUserById(@Param('userId') userId: number, @Req() { user }: Request): Promise<User> {
+    return this.service.getUserById(userId);
+  }
+
 }

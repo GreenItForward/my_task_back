@@ -27,7 +27,12 @@ export class TaskService {
   }
   
 
-
+  public async getAllFromProject(project: number): Promise<Task[]>{
+    return this.repository
+      .createQueryBuilder('task')
+      .where('task.projectId = :projectId', { projectId: project })
+      .getMany();
+  }
   public async create(task: CreateTaskDto, req: Request): Promise<Task> {
     const newTask = new Task();
     const project = await this.projectService.getProjectById(task.projectID);
