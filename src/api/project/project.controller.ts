@@ -29,8 +29,8 @@ export class ProjectController {
     @ApiBody({ type: CreateProjectDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async create(@Body() body:CreateProjectDto, @Req() req: Request ): Promise<Project> {
-        return this.service.create(body, req); 
+    private async create(@Body() body:CreateProjectDto, @Req() { user }: Request): Promise<Project> {
+        return this.service.create(body, <User>user);
     }
    
 }

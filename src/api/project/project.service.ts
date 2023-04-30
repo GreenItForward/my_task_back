@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Request } from 'express';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
 import { User } from '../user/user.entity';
@@ -21,9 +20,8 @@ export class ProjectService {
     return this.projectRepo.find();
   }
 
-  public async create(body: CreateProjectDto, req: Request): Promise<Project> {
+  public async create(body: CreateProjectDto, user: User): Promise<Project> {
     const project = new Project();
-    const user: User = <User>req.user;
     project.nom = body.nom;
     project.description = body.description;
     project.codeJoin = await this.generateCodeJoin();

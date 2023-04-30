@@ -1,7 +1,7 @@
 import {IsNotEmpty, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 
-export class UserProjectDto {
+export class JoinDto {
     @IsNotEmpty()
     @IsNumber()
     @ApiProperty({ required: true })
