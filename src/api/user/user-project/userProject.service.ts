@@ -21,15 +21,12 @@ export class UserProjectService {
         private readonly projectService: ProjectService
     ) {}
 
-    public async create(body: JoinDto, user: User): Promise<UserProject | never> {
+    public async join(body: JoinDto, user: User): Promise<UserProject | never> {
         const userProject = new UserProject();
 
-        userProject.project = await this.projectRepo.findOneBy({ "id": body.projectId });
-        userProject.user = user;
-        userProject.role = RoleEnum.MEMBRE;
-
+        userProject.project = await this.projectRepo.findOneBy({ "codeJoin": body.codeJoin });
         if(!userProject.project) {
-            throw new NotFoundException("Projet introuvable");
+            throw new NotFoundException("Code join invalide");
         }
 
         const userInProject = await this.userProjectRepo
@@ -41,9 +38,9 @@ export class UserProjectService {
         if(userInProject) {
             throw new NotFoundException("Vous êtes déjà dans un projet");
         }
-        if(body.codeJoin != userProject.project.codeJoin) {
-            throw new NotFoundException("Code join invalide");
-        }
+
+        userProject.user = user;
+        userProject.role = RoleEnum.MEMBRE;
 
         userProject.project = await this.projectRepo.save(userProject.project);
         userProject.project.codeJoin = await this.projectService.generateCodeJoin();

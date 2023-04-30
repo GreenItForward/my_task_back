@@ -4,11 +4,6 @@ import {RoleEnum} from "@/common/enums/role.enum";
 
 export class JoinDto {
     @IsNotEmpty()
-    @IsNumber()
-    @ApiProperty({ required: true })
-    projectId: number;
-
-    @IsNotEmpty()
     @IsString()
     @ApiProperty({ required: true })
     codeJoin: string;

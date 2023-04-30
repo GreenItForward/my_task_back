@@ -27,8 +27,8 @@ export class UserProjectController {
     @ApiBody({ type: JoinDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async create(@Body() body:JoinDto, @Req() { user }: Request): Promise<UserProject | never> {
-        return this.service.create(body, <User>user);
+    private async join(@Body() body:JoinDto, @Req() { user }: Request): Promise<UserProject | never> {
+        return this.service.join(body, <User>user);
     }
 
     @Put('change-role')
