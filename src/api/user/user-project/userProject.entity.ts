@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column} from 'typeorm';
 import { Project } from "@/api/project/project.entity";
 import { User } from "@/api/user/user.entity";
-import { Role } from "@/api/user/role/role.entity";
+import {RoleEnum} from "@/common/enums/role.enum";
 
 @Entity()
 export class UserProject {
@@ -16,7 +16,10 @@ export class UserProject {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @ManyToOne(() => Role)
-    @JoinColumn({ name: 'role_id' })
-    role: Role;
+    @Column({
+        type: 'enum',
+        enum: RoleEnum,
+        default: RoleEnum.MEMBRE,
+    })
+    role: RoleEnum;
 }

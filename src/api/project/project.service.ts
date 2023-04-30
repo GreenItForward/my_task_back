@@ -5,14 +5,20 @@ import { Request } from 'express';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
 import { User } from '../user/user.entity';
+import {UserProject} from "@/api/user/user-project/userProject.entity";
+import {RoleEnum} from "@/common/enums/role.enum";
 
 @Injectable()
 export class ProjectService {
   @InjectRepository(Project)
-  private readonly repository: Repository<Project>;
+  private readonly projectRepo: Repository<Project>;
+  @InjectRepository(User)
+  private readonly userRepo: Repository<User>;
+  @InjectRepository(UserProject)
+  private readonly userProjectRepo: Repository<UserProject>;
 
   public async getAll(): Promise<Project[]> {
-    return this.repository.find();
+    return this.projectRepo.find();
   }
 
   public async create(body: CreateProjectDto, req: Request): Promise<Project> {
@@ -23,11 +29,19 @@ export class ProjectService {
     project.codeJoin = await this.generateCodeJoin();
     project.user = user;
 
-    return this.repository.save(project);
+    const userProject = new UserProject();
+
+    userProject.project = await this.projectRepo.save(project);
+    userProject.user = user;
+    userProject.role = RoleEnum.ADMINISTRATEUR;
+    console.log(userProject);
+    await this.userProjectRepo.save(userProject);
+
+    return userProject.project;
   }
 
   public async update(project: Project): Promise<Project> {
-    return this.repository.save(project);
+    return this.projectRepo.save(project);
   }
 
   public async generateCodeJoin(): Promise<string> {
@@ -41,7 +55,7 @@ export class ProjectService {
   }
 
   public async getProjectById(id: number): Promise<Project> {
-    const projectFound = await this.repository.findOne({ where: { id }, relations: ['user'] });
+    const projectFound = await this.projectRepo.findOne({ where: { id }, relations: ['user'] });
 
     if (!projectFound) {
       throw new NotFoundException('Le projet demandé est introuvable.');
@@ -55,7 +69,7 @@ export class ProjectService {
       throw new NotFoundException('Le projet demandé est introuvable.');
     }
 
-    const foundProject = await this.repository.findOne({ where: { id: project.id } });
+    const foundProject = await this.projectRepo.findOne({ where: { id: project.id } });
 
     if (!foundProject) {
       throw new NotFoundException('Le projet demandé est introuvable.');

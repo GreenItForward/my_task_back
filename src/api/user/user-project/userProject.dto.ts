@@ -1,4 +1,4 @@
-import {IsNotEmpty, IsNumber} from "class-validator";
+import {IsNotEmpty, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class UserProjectDto {
@@ -8,12 +8,7 @@ export class UserProjectDto {
     projectId: number;
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     @ApiProperty({ required: true })
-    userId: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @ApiProperty({ required: true })
-    roleId: number;
+    codeJoin: string;
 }

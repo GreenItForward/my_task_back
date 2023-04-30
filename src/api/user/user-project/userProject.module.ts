@@ -6,11 +6,10 @@ import {UserProjectController} from "@/api/user/user-project/userProject.control
 import {UserProjectService} from "@/api/user/user-project/userProject.service";
 import {Project} from "@/api/project/project.entity";
 import {User} from "@/api/user/user.entity";
-import {Role} from "@/api/user/role/role.entity";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([UserProject, Project, User, Role]),
+        TypeOrmModule.forFeature([UserProject, Project, User]),
         AuthModule,
     ],
     controllers: [UserProjectController],
