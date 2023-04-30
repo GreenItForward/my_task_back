@@ -7,6 +7,7 @@ import { CreateProjectDto } from './project.dto';
 import { UserService } from '../user/user.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
+import { Task } from '@/api/project/task/task.entity';
 
 @ApiTags('Project')
 @Controller('project')
@@ -17,13 +18,14 @@ export class ProjectController {
     @Inject(UserService)
     private readonly userService: UserService;
 
-    @Get()
+    @Get('user')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private getAll(@Req() { user }: Request): Promise<Project[]> { 
-        return this.service.getAll();
-    }
-
+    public async getAllByUser(@Req() { user }: Request): Promise<Project[]> {
+        return this.service.getAllByUser(<User>user);
+      }
+      
     @Post()
     @ApiBearerAuth()
     @ApiBody({ type: CreateProjectDto })
