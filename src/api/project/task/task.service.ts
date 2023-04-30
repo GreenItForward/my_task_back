@@ -23,9 +23,13 @@ export class TaskService {
   }
 
   async findOneById(id: number): Promise<Task> {
-    return await this.repository.findOne({ where: { id }, relations: ['project'] });
+    return await this.repository.findOne({where: {id}, relations: ['project']});
   }
-  
+
+  async deleteOneById(id: number): Promise<void> {
+    const task = await this.repository.findOne({ where: { id }, relations: ['project'] });
+    await this.repository.delete(task.id)
+  }
 
   public async getAllFromProject(project: number): Promise<Task[]>{
     return this.repository

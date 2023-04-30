@@ -9,7 +9,7 @@ import {
     Inject,
     Get,
     Post,
-    Param
+    Param, Delete
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
@@ -34,7 +34,7 @@ export class TaskController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async findOneProjectByTaskId(@Param('taskId') taskId:number): Promise<Task> {
+    private async findOneByTaskId(@Param('taskId') taskId:number): Promise<Task> {
         if(taskId) return await this.service.findOneById(Number(taskId));
     }
 
@@ -67,5 +67,9 @@ export class TaskController {
     private edit( @Body() task: UpdateTaskDto, @Req() req: Request ): Promise<Task> {
         return this.service.edit(task, req);
     }
-  
+
+    @Delete(':taskId')
+    private async deleteOneById(@Param('taskId') taskId:number): Promise<void> {
+        if(taskId) await this.service.deleteOneById(Number(taskId));
+    }
 }
