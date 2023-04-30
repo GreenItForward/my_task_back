@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import { Task } from '../project/task/task.entity';
 import { Project } from '../project/project.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -36,7 +36,4 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Project , (project) => project.user)
   projects: Project[];
-
-  @OneToMany(() => Task, (task) => task.user)
-  labels: Task[];
 }
