@@ -17,6 +17,7 @@ import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '@/api/user/user.entity';
 
 @ApiTags('Task')
 @Controller('task')
@@ -69,7 +70,11 @@ export class TaskController {
     }
 
     @Delete(':taskId')
-    private async deleteOneById(@Param('taskId') taskId:number): Promise<void> {
-        if(taskId) await this.service.deleteOneById(Number(taskId));
+    @ApiBearerAuth()
+    @ApiOkResponse({ description: 'Delete task success' })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async deleteOneById(@Param('taskId') taskId:number, @Req() { user } : Request): Promise<void> {
+        await this.service.deleteOneById(Number(taskId), <User>user);
     }
 }
