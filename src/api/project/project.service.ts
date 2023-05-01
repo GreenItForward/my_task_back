@@ -1,5 +1,5 @@
 import { User } from '@/api/user/user.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from './project.entity';
@@ -38,8 +38,19 @@ export class ProjectService {
     return userProject.project;
   }
 
-  public async update(project: Project): Promise<Project> {
-    return this.projectRepo.save(project);
+  public async update(projectId:number, body: CreateProjectDto, user: User): Promise<HttpException> {
+    const project = await this.getProjectById(projectId);    
+
+    if (project.user.id !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour modifier ce projet.');
+    }
+
+    project.nom = !body.nom ? project.nom : body.nom;
+    project.description = body.description;
+
+    this.projectRepo.save(project);
+
+    return new HttpException('Le projet a bien été modifié.', HttpStatus.OK);
   }
 
   public async generateCodeJoin(): Promise<string> {
