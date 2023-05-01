@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Body, Inject, Get, Post } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Body, Inject, Get, Post, Param, HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { ProjectService } from './project.service';
@@ -34,5 +34,16 @@ export class ProjectController {
     private async create(@Body() body:CreateProjectDto, @Req() { user }: Request): Promise<Project> {
         return this.service.create(body, <User>user);
     }
+
+    
+    @Post('update/:projectId')
+    @ApiBearerAuth()
+    @ApiBody({ type: CreateProjectDto })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async update(@Param("projectId") projectId : number, @Body() body:CreateProjectDto, @Req() { user }: Request): Promise<HttpException> {
+        return this.service.update(projectId, body, <User>user);
+    }
+
    
 }
