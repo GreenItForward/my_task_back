@@ -20,6 +20,7 @@ export class ProjectController {
 
     @Get('user')
     @ApiBearerAuth()
+    
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     public async getAllByUser(@Req() { user }: Request): Promise<Project[]> {
