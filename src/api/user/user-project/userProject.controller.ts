@@ -39,4 +39,4 @@ export class UserProjectController {
     private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<UserProject | never> {
         return this.service.changeRole(body, <User>user);
     }
-}
+} 
