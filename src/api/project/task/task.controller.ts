@@ -9,7 +9,7 @@ import {
     Inject,
     Get,
     Post,
-    Param, Delete
+    Param, Delete, HttpException
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
@@ -74,7 +74,7 @@ export class TaskController {
     @ApiOkResponse({ description: 'Delete task success' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async deleteOneById(@Param('taskId') taskId:number, @Req() { user } : Request): Promise<void> {
-        await this.service.deleteOneById(Number(taskId), <User>user);
+    private async deleteOneById(@Param('taskId') taskId:number, @Req() { user } : Request): Promise<HttpException> {
+        return await this.service.deleteOneById(Number(taskId), <User>user);
     }
 }
