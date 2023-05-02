@@ -1,7 +1,7 @@
 import { StatusEnum } from '@/common/enums/status.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsDate, IsEnum, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -38,10 +38,14 @@ export class UpdateTaskDto {
   @ApiProperty( { enum: StatusEnum } )
   public readonly status: string;
 
+  @ValidateIf((_, value) => value !== null && value !== 'null')
   @IsDate()
+  @Transform((value) => value.obj.deadline === 'null' ? null : value.obj.deadline, { toClassOnly: true })
   @Type(() => Date)
+  @IsOptional()
+  @IsOptional()
   @ApiProperty( { required: false } )
-  public readonly deadline: Date;
+  public readonly deadline: Date | null;
 
   @IsNumber()
   @ApiProperty( { required: true } )
