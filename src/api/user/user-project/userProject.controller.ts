@@ -2,8 +2,8 @@ import {ApiBearerAuth, ApiBody, ApiTags} from "@nestjs/swagger";
 import {
     Body,
     ClassSerializerInterceptor,
-    Controller,
-    Inject,
+    Controller, Get,
+    Inject, Param,
     Post, Put,
     Req,
     UseGuards,
@@ -38,5 +38,13 @@ export class UserProjectController {
     @UseInterceptors(ClassSerializerInterceptor)
     private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<UserProject | never> {
         return this.service.changeRole(body, <User>user);
+    }
+
+    @Get('get-users-by-project/:projectId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async getUsers(@Param('projectId') projectId: number, @Req() { user }: Request): Promise<UserProject[]> {
+        return this.service.getUsers(projectId, <User>user);
     }
 }

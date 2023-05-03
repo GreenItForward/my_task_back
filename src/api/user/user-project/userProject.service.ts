@@ -21,6 +21,8 @@ export class UserProjectService {
         private readonly projectService: ProjectService
     ) {}
 
+
+
     public async join(body: JoinDto, user: User): Promise<UserProject | never> {
         const userProject = new UserProject();
 
@@ -46,6 +48,7 @@ export class UserProjectService {
         userProject.project.codeJoin = await this.projectService.generateCodeJoin();
         return this.userProjectRepo.save(userProject);
     }
+
 
 
     public async changeRole(body: ChangeRoleDto, user: User): Promise<UserProject | never> {
@@ -81,5 +84,30 @@ export class UserProjectService {
         userProject.role = body.role;
 
         return this.userProjectRepo.save(userProject);
+    }
+
+
+
+    public async getUsers(projectId: number, user: User): Promise<UserProject[]> {
+        const users = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.project = :project', { project: projectId })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getMany();
+
+        let isInProject = false;
+        for (let i = 0; i < users.length; i++) {
+            if (user.id === users[i].user.id) {
+                isInProject = true;
+            }
+        }
+        if(!isInProject) {
+            throw new NotFoundException('Vous n\'êtes pas autorisé à accéder à cette ressource.');
+        }
+        if (!users || users.length === 0) {
+            throw new NotFoundException('Aucun projet trouvé.');
+        }
+
+        return users;
     }
 }
