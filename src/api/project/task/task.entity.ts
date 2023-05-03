@@ -40,7 +40,7 @@ export class Task extends BaseEntity {
   @Column()
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.tasks, { nullable: false })
+  @ManyToOne(() => Project, (project) => project.tasks, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'projectId' })
   project: Project;
 

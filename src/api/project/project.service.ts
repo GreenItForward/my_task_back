@@ -97,6 +97,17 @@ export class ProjectService {
   
     return projects;
   }
-  
 
+  public async deleteByid(id: number, user: User): Promise<HttpException> {
+    const project = await this.getProjectById(id);
+
+    if (project.user.id !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour supprimer ce projet.');
+    }
+    
+    await this.projectRepo.delete(id);
+
+    return new HttpException('Le projet a bien été supprimé.', HttpStatus.OK);
+  }
+  
 }

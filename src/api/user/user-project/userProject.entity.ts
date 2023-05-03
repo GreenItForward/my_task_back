@@ -12,7 +12,7 @@ export class UserProject {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @ManyToOne(() => Project)
+    @ManyToOne(() => Project, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'project_id' })
     project: Project;
 

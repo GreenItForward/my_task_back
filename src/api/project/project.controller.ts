@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Body, Inject, Get, Post, Param, HttpException } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Req, UseGuards, UseInterceptors, Body, Inject, Get, Post, Param, HttpException, Delete } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { ProjectService } from './project.service';
@@ -44,6 +44,14 @@ export class ProjectController {
     @UseInterceptors(ClassSerializerInterceptor)
     private async update(@Param("projectId") projectId : number, @Body() body:CreateProjectDto, @Req() { user }: Request): Promise<HttpException> {
         return this.service.update(projectId, body, <User>user);
+    }
+
+    @Delete(':projectId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async delete(@Param("projectId") projectId : number, @Req() { user }: Request): Promise<HttpException> {
+        return this.service.deleteByid(projectId, <User>user);
     }
 
    
