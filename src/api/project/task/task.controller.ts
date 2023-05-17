@@ -65,7 +65,7 @@ export class TaskController {
     @ApiOkResponse({ description: 'Edit task success' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private edit( @Body() task: UpdateTaskDto, @Req() req: Request ): Promise<Task> {
+    private edit( @Body() task: UpdateTaskDto, @Req() req: Request ): Promise<Task> {        
         return this.service.edit(task, req);
     }
 

@@ -41,8 +41,10 @@ export class UpdateTaskDto {
   @ValidateIf((_, value) => value !== null && value !== 'null')
   @IsDate()
   @Transform((value) => {
-    if (value === null || value.obj.deadline) {
+    if (value === null) {      
       return null;
+    }else if (value.obj.deadline) {
+      return new Date(value.obj.deadline);
     }
     return true;
   } 
@@ -50,7 +52,7 @@ export class UpdateTaskDto {
   @Type(() => Date)
   @IsOptional()
   @ApiProperty( { required: false } )
-  public readonly deadline: Date | null;
+  public readonly deadline: Date;
 
   @IsNumber()
   @ApiProperty( { required: true } )
