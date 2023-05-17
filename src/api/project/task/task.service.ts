@@ -84,7 +84,8 @@ export class TaskService {
     existingTask.description = task.description ? task.description : existingTask.description;
     existingTask.date = new Date();
     existingTask.status = task.status as StatusEnum;
-    existingTask.deadline = task.deadline ? task.deadline : existingTask.deadline;
+    
+    existingTask.deadline = task.deadline;
   
     return this.repository.save(existingTask);
   }

@@ -25,7 +25,7 @@ export class Task extends BaseEntity {
   status: StatusEnum;
 
   @Column({ nullable: true })
-  deadline: Date;
+  deadline: Date | null;
 
   @Column()
   userId: number;

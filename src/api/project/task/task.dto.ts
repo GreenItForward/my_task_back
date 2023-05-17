@@ -38,21 +38,20 @@ export class UpdateTaskDto {
   @ApiProperty( { enum: StatusEnum } )
   public readonly status: string;
 
-  @ValidateIf((_, value) => value !== null && value !== 'null')
+  @ValidateIf((_, value) => value !== null && value !== 'null' && !isNaN(Date.parse(value)))
   @IsDate()
-  @Transform((value) => {
-    if (value === null) {      
-      return null;
-    }else if (value.obj.deadline) {
-      return new Date(value.obj.deadline);
-    }
-    return true;
-  } 
-  )
+  @Transform(({ value }) => {
+      if (value === null || value === 'null' || isNaN(Date.parse(value))) {        
+          return null;
+      } else if (value.obj && value.obj.deadline) {
+          return new Date(value.obj.deadline);
+      }
+      return value;
+  })
   @Type(() => Date)
   @IsOptional()
-  @ApiProperty( { required: false } )
-  public readonly deadline: Date;
+  @ApiProperty({ required: false })
+  public readonly deadline: Date | null;
 
   @IsNumber()
   @ApiProperty( { required: true } )
