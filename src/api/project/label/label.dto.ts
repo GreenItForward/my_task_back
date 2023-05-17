@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateLabelDto {
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ always: true })
+  @Transform(({ value }) => value.trim())
   @ApiProperty()
   readonly nom: string;
 
@@ -15,4 +17,4 @@ export class CreateLabelDto {
   @IsNotEmpty()
   @ApiProperty()
   projectId: number; 
-}
+} 
