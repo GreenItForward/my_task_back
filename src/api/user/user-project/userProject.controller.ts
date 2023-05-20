@@ -37,7 +37,7 @@ export class UserProjectController {
     @ApiBody({ type: ChangeRoleDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<UserProject | never> {
+    private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<RoleEnum | never> {
         return this.service.changeRole(body, <User>user);
     }
 

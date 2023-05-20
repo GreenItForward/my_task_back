@@ -47,9 +47,14 @@ export class UserProjectService {
         return this.userProjectRepo.save(userProject);
     }
 
-    public async changeRole(body: ChangeRoleDto, user: User): Promise<UserProject | never> {
+    public async changeRole(body: ChangeRoleDto, user: User): Promise<RoleEnum | never> {
         const userProject = new UserProject();
 
+        if (body.userId == user.id) {
+            throw new NotFoundException("Vous ne pouvez pas modifier votre propre rôle");
+        }
+
+        // Vérifie si l'utilisateur courant a le droit de modifier le rôle de l'utilisateur ciblé
         let role = await this.userProjectRepo
             .createQueryBuilder('userProject')
             .where('userProject.user = :user', { user: user.id })
@@ -63,13 +68,15 @@ export class UserProjectService {
         if(role.role != RoleEnum.ADMINISTRATEUR) {
             throw new NotFoundException("Vous n'avez pas les droits pour effectuer cette action");
         }
-
+        
+        // Vérifie si l'utilisateur ciblé est dans le projet
         role = await this.userProjectRepo
             .createQueryBuilder('userProject')
             .where('userProject.user = :user', { user: body.userId })
             .andWhere('userProject.project = :project', { project: body.projectId })
             .leftJoinAndSelect('userProject.user', 'user')
             .getOne();
+
         if(!role) {
             throw new NotFoundException("L'utilisateur que vous avez spécifié n'est pas dans ce projet");
         }
@@ -78,8 +85,9 @@ export class UserProjectService {
         userProject.project = await this.projectRepo.findOneBy({ "id": body.projectId });
         userProject.user = await this.userRepo.findOneBy({ "id": body.userId });
         userProject.role = body.role;
+        await this.userProjectRepo.save(userProject);
 
-        return this.userProjectRepo.save(userProject);
+        return await this.getRole(userProject.project.id, userProject.user);
     }
 
     public async getUsers(projectId: number, user: User): Promise<UserProject[]> {
