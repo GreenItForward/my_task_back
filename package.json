@@ -1,6 +1,6 @@
 {
   "name": "my_task_back",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "API used by my_task_front",
   "author": {
     "name": "James ABIB, Ronan KIELT, Charles CRETOIS",
@@ -22,6 +22,10 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:docker": "npm run docker:compose &&; npm run start",
+    "start:docker:dev": "npm run docker:compose && nest start --watch",
+    "start:docker:debug": "npm run docker:compose &&; nest start --debug --watch",  
+    "docker:compose": "docker-compose up -d",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
