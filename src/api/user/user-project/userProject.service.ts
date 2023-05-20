@@ -21,8 +21,6 @@ export class UserProjectService {
         private readonly projectService: ProjectService
     ) {}
 
-
-
     public async join(body: JoinDto, user: User): Promise<UserProject | never> {
         const userProject = new UserProject();
 
@@ -48,8 +46,6 @@ export class UserProjectService {
         userProject.project.codeJoin = await this.projectService.generateCodeJoin();
         return this.userProjectRepo.save(userProject);
     }
-
-
 
     public async changeRole(body: ChangeRoleDto, user: User): Promise<UserProject | never> {
         const userProject = new UserProject();
@@ -86,8 +82,6 @@ export class UserProjectService {
         return this.userProjectRepo.save(userProject);
     }
 
-
-
     public async getUsers(projectId: number, user: User): Promise<UserProject[]> {
         const users = await this.userProjectRepo
             .createQueryBuilder('userProject')
@@ -109,5 +103,20 @@ export class UserProjectService {
         }
 
         return users;
+    }
+
+    public async getRole(projectId: number, user: User): Promise<RoleEnum> {
+        const role = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.project = :project', { project: projectId })
+            .andWhere('userProject.user = :user', { user: user.id })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getOne();
+
+        if (!role) {
+            throw new NotFoundException('Aucun rôle trouvé.');
+        }
+
+        return role.role;
     }
 }

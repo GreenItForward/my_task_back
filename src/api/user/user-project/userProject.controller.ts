@@ -15,6 +15,7 @@ import {ChangeRoleDto, JoinDto} from "@/api/user/user-project/userProject.dto";
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {User} from "@/api/user/user.entity";
 import {Request} from "express";
+import {RoleEnum} from "@/common/enums/role.enum";
 
 @ApiTags('Users and Projects')
 @Controller('user-project')
@@ -46,5 +47,13 @@ export class UserProjectController {
     @UseInterceptors(ClassSerializerInterceptor)
     private async getUsers(@Param('projectId') projectId: number, @Req() { user }: Request): Promise<UserProject[]> {
         return this.service.getUsers(projectId, <User>user);
+    }
+
+    @Get('get_role/:projectId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async getRole(@Param('projectId') projectId: number, @Req() { user }: Request): Promise<RoleEnum> {
+        return this.service.getRole(projectId, <User>user);
     }
 }
