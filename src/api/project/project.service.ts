@@ -1,9 +1,9 @@
-import { User } from '@/api/user/user.entity';
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Project } from './project.entity';
-import { CreateProjectDto } from './project.dto';
+import {User} from '@/api/user/user.entity';
+import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import {Project} from './project.entity';
+import {CreateProjectDto} from './project.dto';
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {RoleEnum} from "@/common/enums/role.enum";
 
@@ -89,13 +89,12 @@ export class ProjectService {
 
   public async getAllByUser(user: User): Promise<Project[]> {
     const userId = user.id;
-    const projects = await this.projectRepo.find({ where: { user: { id: userId } }, relations: ['user'] });
+    const userProjects = await this.userProjectRepo.find({ where: { user: { id: userId } }, relations: ['project'] });
   
-    if (!projects || projects.length === 0) {
+    if (!userProjects || userProjects.length === 0) {
       throw new NotFoundException('Aucun projet trouvé.');
     }
-  
-    return projects;
+    return userProjects.map(userProject => userProject.project);
   }
 
   public async deleteByid(id: number, user: User): Promise<HttpException> {
