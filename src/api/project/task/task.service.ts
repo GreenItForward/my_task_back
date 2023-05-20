@@ -8,12 +8,14 @@ import { User } from '@/api/user/user.entity';
 import { UserService } from '@/api/user/user.service';
 import { ProjectService } from '../project.service';
 import { StatusEnum } from '@/common/enums/status.enum';
+import {UserProjectService} from "@/api/user/user-project/userProject.service";
 
 @Injectable()
 export class TaskService {
   constructor(
     private readonly userService: UserService,
     private readonly projectService: ProjectService,
+    private readonly userProjectService: UserProjectService,
     @InjectRepository(Task)
     private readonly repository: Repository<Task>
   ) {}
@@ -48,11 +50,7 @@ export class TaskService {
     const newTask = new Task();
     const project = await this.projectService.getProjectById(task.projectID);
     const user: User = <User> req.user;
-    const ownerId = await this.userService.getIdbyUser(project.user);
-
-    if (ownerId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour créer une tâche dans ce projet.');
-    }
+    await this.userProjectService.getUsers(project.id, user);
 
     newTask.titre = task.title;
     newTask.description = task.description;
