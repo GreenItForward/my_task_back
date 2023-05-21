@@ -39,10 +39,10 @@ export class ProjectService {
   }
 
   public async update(projectId:number, body: CreateProjectDto, user: User): Promise<HttpException> {
-    const project = await this.getProjectById(projectId);    
-
-    if (project.user.id !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour modifier ce projet.');
+    const project = await this.getProjectById(projectId);   
+        
+    if(await this.userProjectService.isInProject(project.id, user) === false) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet auquel vous ne participez pas.');
     }
 
     project.nom = !body.nom ? project.nom : body.nom;

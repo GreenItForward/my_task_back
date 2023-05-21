@@ -64,7 +64,7 @@ export class TaskService {
   public async edit(task: UpdateTaskDto, req: Request): Promise<Task> {
     const taskId = task.id;
     const existingTask = await this.repository.findOneBy({ id: taskId });
-  
+   
     if (!existingTask) {
       throw new NotFoundException('Tâche introuvable');
     }
