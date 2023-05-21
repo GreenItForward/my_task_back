@@ -35,6 +35,7 @@ export class UserProjectService {
             .andWhere('userProject.project = :project', { project: userProject.project.id })
             .leftJoinAndSelect('userProject.user', 'user')
             .getOne();
+
         if(userInProject) {
             throw new NotFoundException("Vous êtes déjà dans un projet");
         }
@@ -88,6 +89,17 @@ export class UserProjectService {
         await this.userProjectRepo.save(userProject);
 
         return await this.getRole(userProject.project.id, userProject.user);
+    }
+
+    public async isInProject(projectId: number, user: User): Promise<boolean> {
+        const userProject = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.user = :user', { user: user.id })
+            .andWhere('userProject.project = :project', { project: projectId })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getOne();
+    
+        return !userProject ? false : true;
     }
 
     public async getUsers(projectId: number, user: User): Promise<UserProject[]> {
