@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { CreateTaskDto, UpdateTaskDto } from './task.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@/api/user/user.entity';
 
 @ApiTags('Task')
@@ -27,6 +27,10 @@ export class TaskController {
     private readonly service: TaskService;
 
     @Get()
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    @ApiOperation({ summary: 'Get all tasks by user' })
     private getAll(@Req() { user }: Request): Promise<Task[]> { 
         return this.service.getAll();
     }
@@ -35,6 +39,7 @@ export class TaskController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
+    @ApiOperation({ summary: 'Get task by id' })
     private async findOneByTaskId(@Param('taskId') taskId:number): Promise<Task> {
         if(taskId) return await this.service.findOneById(Number(taskId));
     }
@@ -43,6 +48,7 @@ export class TaskController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
+    @ApiOperation({ summary: 'Get all tasks from project' })
     private async findTasksByProject(@Param('projectId') projectId:number): Promise<Task[]> {
         if(projectId) return await this.service.getAllFromProject(projectId)
     }
@@ -52,6 +58,7 @@ export class TaskController {
     @ApiBody({ type: CreateTaskDto })
     @ApiBadRequestResponse({ description: 'Create task failed' })
     @ApiOkResponse({ description: 'Create task success' })
+    @ApiOperation({ summary: 'Create task' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     private create( @Body() task:CreateTaskDto, @Req() req: Request ): Promise<Task> {
@@ -63,6 +70,8 @@ export class TaskController {
     @ApiBody({ type: UpdateTaskDto })
     @ApiBadRequestResponse({ description: 'Edit task failed' })
     @ApiOkResponse({ description: 'Edit task success' })
+    @ApiOperation({ summary: 'Edit task' })
+    @ApiTags('Task')
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     private edit( @Body() task: UpdateTaskDto, @Req() req: Request ): Promise<Task> {        
@@ -72,9 +81,11 @@ export class TaskController {
     @Delete(':taskId')
     @ApiBearerAuth()
     @ApiOkResponse({ description: 'Delete task success' })
+    @ApiOperation({ summary: 'Delete task' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     private async deleteOneById(@Param('taskId') taskId:number, @Req() { user } : Request): Promise<HttpException> {
         return await this.service.deleteOneById(Number(taskId), <User>user);
     }
+    
 }

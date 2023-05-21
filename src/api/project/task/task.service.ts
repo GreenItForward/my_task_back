@@ -8,12 +8,14 @@ import { User } from '@/api/user/user.entity';
 import { UserService } from '@/api/user/user.service';
 import { ProjectService } from '../project.service';
 import { StatusEnum } from '@/common/enums/status.enum';
+import {UserProjectService} from "@/api/user/user-project/userProject.service";
 
 @Injectable()
 export class TaskService {
   constructor(
     private readonly userService: UserService,
     private readonly projectService: ProjectService,
+    private readonly userProjectService: UserProjectService,
     @InjectRepository(Task)
     private readonly repository: Repository<Task>
   ) {}
@@ -48,16 +50,11 @@ export class TaskService {
     const newTask = new Task();
     const project = await this.projectService.getProjectById(task.projectID);
     const user: User = <User> req.user;
-    const ownerId = await this.userService.getIdbyUser(project.user);
-
-    if (ownerId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour créer une tâche dans ce projet.');
-    }
+    await this.userProjectService.getUsers(project.id, user);
 
     newTask.titre = task.title;
     newTask.description = task.description;
     newTask.date = new Date();
-    newTask.user = user;
     newTask.project = project;
     newTask.status= task.status as StatusEnum;
     await this.projectService.getProjectById(task.projectID);
@@ -67,24 +64,26 @@ export class TaskService {
   public async edit(task: UpdateTaskDto, req: Request): Promise<Task> {
     const taskId = task.id;
     const existingTask = await this.repository.findOneBy({ id: taskId });
-  
+   
     if (!existingTask) {
       throw new NotFoundException('Tâche introuvable');
     }
 
-    const project = await this.projectService.getProjectById(task.projectID);
     const user: User = <User> req.user;
-    const ownerId = await this.userService.getIdbyUser(project.user);
-  
-    if (ownerId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour modifier cette tâche.');
+    if(!this.userProjectService.isInProject(task.projectID, user)) {
+      throw new NotFoundException('Vous n\'êtes pas dans ce projet');
     }
   
     existingTask.titre = task.title ? task.title : existingTask.titre;
     existingTask.description = task.description ? task.description : existingTask.description;
     existingTask.date = new Date();
     existingTask.status = task.status as StatusEnum;
-    
+
+    if(task.userID && this.userProjectService.isInProject(task.projectID, user)) {
+      existingTask.user = await this.userService.getUserById(task.userID);
+    }else{
+      existingTask.user = null;
+    }
     existingTask.deadline = task.deadline;
   
     return this.repository.save(existingTask);

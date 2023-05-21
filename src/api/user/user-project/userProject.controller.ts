@@ -2,7 +2,7 @@ import {ApiBearerAuth, ApiBody, ApiTags} from "@nestjs/swagger";
 import {
     Body,
     ClassSerializerInterceptor,
-    Controller, Get,
+    Controller, Delete, Get, HttpException,
     Inject, Param,
     Post, Put,
     Req,
@@ -15,6 +15,7 @@ import {ChangeRoleDto, JoinDto} from "@/api/user/user-project/userProject.dto";
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {User} from "@/api/user/user.entity";
 import {Request} from "express";
+import {RoleEnum} from "@/common/enums/role.enum";
 
 @ApiTags('Users and Projects')
 @Controller('user-project')
@@ -36,7 +37,7 @@ export class UserProjectController {
     @ApiBody({ type: ChangeRoleDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
-    private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<UserProject | never> {
+    private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<RoleEnum | never> {
         return this.service.changeRole(body, <User>user);
     }
 
@@ -46,5 +47,25 @@ export class UserProjectController {
     @UseInterceptors(ClassSerializerInterceptor)
     private async getUsers(@Param('projectId') projectId: number, @Req() { user }: Request): Promise<UserProject[]> {
         return this.service.getUsers(projectId, <User>user);
+    }
+
+    @Get('get_role/:projectId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async getRole(@Param('projectId') projectId: number, @Req() { user }: Request): Promise<RoleEnum> {
+        return this.service.getRole(projectId, <User>user);
+    }
+
+    @Delete('project/:projectId/user/:userId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async deleteUserOfProject (
+        @Param('projectId') projectId: number,
+        @Param('userId') userId: number,
+        @Req() { user }: Request
+    ): Promise<HttpException> {
+        return this.service.deleteUserOfProject(projectId, userId, <User>user);
     }
 }

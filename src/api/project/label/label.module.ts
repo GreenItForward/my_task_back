@@ -8,9 +8,10 @@ import { TaskModule } from '../task/task.module';
 import { ProjectModule } from '../project.module';
 import { UserModule } from '@/api/user/user.module';
 import { TaskLabel } from '../task-label/taskLabel.entity';
+import { UserProjectModule } from '@/api/user/user-project/userProject.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Label, TaskLabel]), TaskModule, ProjectModule, UserModule],
+  imports: [TypeOrmModule.forFeature([Label, TaskLabel]), TaskModule, ProjectModule, UserModule, UserProjectModule],
   providers: [LabelService],
   controllers: [LabelController],
   exports: [LabelService],

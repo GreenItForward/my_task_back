@@ -27,10 +27,10 @@ export class Task extends BaseEntity {
   @Column({ nullable: true })
   deadline: Date | null;
 
-  @Column()
-  userId: number;
+  @Column({ nullable: true })
+  userId: number | null;  
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.tasks, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -49,4 +49,5 @@ export class Task extends BaseEntity {
 
   @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task)
   taskLabels: TaskLabel[];
+  existingTask: Promise<User>;
 }
