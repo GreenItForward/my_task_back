@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {HttpException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {Repository} from "typeorm";
@@ -138,5 +138,37 @@ export class UserProjectService {
         }
 
         return role.role;
+    }
+
+    public async deleteUserOfProject(projectId: number, userId:number, user: User): Promise<HttpException> {
+        // Vérifie si l'utilisateur courant a le droit de modifier le rôle de l'utilisateur ciblé
+        const role = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.user = :user', { user: user.id })
+            .andWhere('userProject.project = :project', { project: projectId })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getOne();
+
+        if(!role) {
+            throw new NotFoundException("Vous n'êtes pas dans ce projet");
+        }
+        if(role.role != RoleEnum.ADMINISTRATEUR) {
+            throw new NotFoundException("Vous n'avez pas les droits pour effectuer cette action");
+        }
+
+        // Vérifie si l'utilisateur ciblé est dans le projet
+        const userProject = await this.userProjectRepo
+            .createQueryBuilder('userProject')
+            .where('userProject.project = :project', { project: projectId })
+            .andWhere('userProject.user = :user', { user: userId })
+            .leftJoinAndSelect('userProject.user', 'user')
+            .getOne();
+
+        if (!userProject) {
+            throw new NotFoundException('Aucun utilisateur trouvé.');
+        }
+
+        await this.userProjectRepo.delete(userProject.id);
+        return new HttpException('Utilisateur supprimé du projet', 200);
     }
 }
