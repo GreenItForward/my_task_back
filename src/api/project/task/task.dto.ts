@@ -38,6 +38,10 @@ export class UpdateTaskDto {
   @ApiProperty( { enum: StatusEnum } )
   public readonly status: string;
 
+  @IsNumber()
+  @ApiProperty( { required: false } )
+  public readonly userID: number;
+
   @ValidateIf((_, value) => value !== null && value !== 'null' && !isNaN(Date.parse(value)))
   @IsDate()
   @Transform(({ value }) => {

@@ -69,18 +69,19 @@ export class TaskService {
       throw new NotFoundException('Tâche introuvable');
     }
 
-    const project = await this.projectService.getProjectById(task.projectID);
     const user: User = <User> req.user;
-    const ownerId = await this.userService.getIdbyUser(project.user);
-  
-    if (ownerId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour modifier cette tâche.');
+    if(!this.userProjectService.isInProject(task.projectID, user)) {
+      throw new NotFoundException('Vous n\'êtes pas dans ce projet');
     }
   
     existingTask.titre = task.title ? task.title : existingTask.titre;
     existingTask.description = task.description ? task.description : existingTask.description;
     existingTask.date = new Date();
     existingTask.status = task.status as StatusEnum;
+
+    if(task.userID && this.userProjectService.isInProject(task.projectID, user)) {
+      existingTask.user = await this.userService.getUserById(task.userID);
+    }
     
     existingTask.deadline = task.deadline;
   

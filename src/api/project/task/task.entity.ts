@@ -49,4 +49,5 @@ export class Task extends BaseEntity {
 
   @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task)
   taskLabels: TaskLabel[];
+  existingTask: Promise<User>;
 }
