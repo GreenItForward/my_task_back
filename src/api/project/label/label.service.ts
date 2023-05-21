@@ -9,6 +9,7 @@ import { CreateLabelDto } from './label.dto';
 import { User } from '@/api/user/user.entity';
 import { UserService } from '@/api/user/user.service';
 import { TaskLabel } from '../task-label/taskLabel.entity';
+import { UserProjectService } from '@/api/user/user-project/userProject.service';
 
 @Injectable()
 export class LabelService {
@@ -16,6 +17,7 @@ export class LabelService {
   constructor(
     private readonly projectService: ProjectService,
     private readonly userService: UserService,
+    private readonly userProjectService: UserProjectService,
   
     @InjectRepository(Label)
     private readonly repository: Repository<Label>,
@@ -41,9 +43,9 @@ export class LabelService {
     label.couleur = createLabelDto.couleur;
     label.project = project;
 
-    if (userId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour créer un label dans ce projet.');
-    }
+    if(!this.userProjectService.isInProject(project.id, user)) {
+      throw new NotFoundException('Vous n\'êtes pas dans ce projet');
+    }    
 
     return this.repository.save(label);
   }
