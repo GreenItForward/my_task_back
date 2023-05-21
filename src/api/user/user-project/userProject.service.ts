@@ -43,8 +43,8 @@ export class UserProjectService {
         userProject.user = user;
         userProject.role = RoleEnum.MEMBRE;
 
-        userProject.project = await this.projectRepo.save(userProject.project);
         userProject.project.codeJoin = await this.projectService.generateCodeJoin();
+        userProject.project = await this.projectRepo.save(userProject.project);
         return this.userProjectRepo.save(userProject);
     }
 
