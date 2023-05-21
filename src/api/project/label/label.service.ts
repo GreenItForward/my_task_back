@@ -76,10 +76,9 @@ export class LabelService {
     }
 
     const project = await this.projectService.getProjectById(createLabelDto.projectId);
-    const userId = await this.userService.getIdbyUser(project.user);
 
-    if (userId !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour modifier ce label.');
+    if(await this.userProjectService.isInProject(project.id, user) === false) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet auquel vous ne participez pas.');
     }
 
     label.nom = createLabelDto.nom;
