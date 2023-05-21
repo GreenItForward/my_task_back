@@ -1,4 +1,4 @@
-import {HttpException, Injectable, NotFoundException} from "@nestjs/common";
+import {HttpException, Inject, Injectable, NotFoundException, forwardRef} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {Repository} from "typeorm";
@@ -17,7 +17,8 @@ export class UserProjectService {
         private readonly projectRepo: Repository<Project>,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
-
+        
+        @Inject(forwardRef(() => ProjectService))
         private readonly projectService: ProjectService
     ) {}
 
@@ -99,7 +100,7 @@ export class UserProjectService {
             .leftJoinAndSelect('userProject.user', 'user')
             .getOne();
     
-        return !userProject ? false : true;
+        return userProject ? true : false;
     }
 
     public async getUsers(projectId: number, user: User): Promise<UserProject[]> {

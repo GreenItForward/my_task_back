@@ -6,15 +6,19 @@ import {Project} from './project.entity';
 import {CreateProjectDto} from './project.dto';
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {RoleEnum} from "@/common/enums/role.enum";
+import { UserProjectService } from '../user/user-project/userProject.service';
 
 @Injectable()
 export class ProjectService {
-  @InjectRepository(Project)
-  private readonly projectRepo: Repository<Project>;
-  @InjectRepository(User)
-  private readonly userRepo: Repository<User>;
-  @InjectRepository(UserProject)
-  private readonly userProjectRepo: Repository<UserProject>;
+  constructor(
+    @InjectRepository(Project)
+    private readonly projectRepo: Repository<Project>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+    @InjectRepository(UserProject)
+    private readonly userProjectRepo: Repository<UserProject>,
+    private readonly userProjectService: UserProjectService
+  ) {}
 
   public async getAll(): Promise<Project[]> {
     return this.projectRepo.find();
@@ -51,6 +55,22 @@ export class ProjectService {
     this.projectRepo.save(project);
 
     return new HttpException('Le projet a bien été modifié.', HttpStatus.OK);
+  }
+
+  public async leave(projectId:number, user: User): Promise<HttpException> {
+    const project = await this.getProjectById(projectId);
+
+    if (project.user.id === user.id) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet dont vous êtes le créateur.');
+    }    
+
+    if(await this.userProjectService.isInProject(project.id, user) === false) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet auquel vous ne participez pas.');
+    }
+
+    await this.userProjectRepo.delete({ project: { id: project.id }, user: { id: user.id } });
+
+    return new HttpException('Vous avez bien quitté le projet.', HttpStatus.OK);
   }
 
   public async generateCodeJoin(): Promise<string> {
