@@ -47,7 +47,7 @@ export class ProjectController {
         return this.service.update(projectId, body, <User>user);
     }
 
-    @Delete(':projectId')
+    @Delete('delete/:projectId')
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete project' })
     @UseGuards(JwtAuthGuard)

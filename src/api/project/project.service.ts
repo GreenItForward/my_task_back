@@ -7,6 +7,7 @@ import {CreateProjectDto} from './project.dto';
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {RoleEnum} from "@/common/enums/role.enum";
 import { UserProjectService } from '../user/user-project/userProject.service';
+import { Label } from './label/label.entity';
 
 @Injectable()
 export class ProjectService {
@@ -17,6 +18,8 @@ export class ProjectService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(UserProject)
     private readonly userProjectRepo: Repository<UserProject>,
+    @InjectRepository(Label)
+    private readonly labelRepo: Repository<Label>,
     private readonly userProjectService: UserProjectService
   ) {}
 
@@ -123,6 +126,10 @@ export class ProjectService {
     if (project.user.id !== user.id) {
       throw new NotFoundException('Vous n\'avez pas les droits pour supprimer ce projet.');
     }
+
+    const labels = await this.labelRepo.find({ where: { project: { id: project.id } } });
+
+    await Promise.all(labels.map(label => this.labelRepo.delete(label.id)));
     
     await this.projectRepo.delete(id);
 

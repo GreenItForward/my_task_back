@@ -7,10 +7,11 @@ import { UserModule } from '../user/user.module';
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {User} from "@/api/user/user.entity";
 import {UserProjectModule} from "@/api/user/user-project/userProject.module";
+import { Label } from './label/label.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Project, User, UserProject]), 
+    TypeOrmModule.forFeature([Project, User, UserProject, Label]), 
     UserModule,
     forwardRef(() => UserProjectModule)
   ],
