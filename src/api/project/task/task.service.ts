@@ -55,7 +55,6 @@ export class TaskService {
     newTask.titre = task.title;
     newTask.description = task.description;
     newTask.date = new Date();
-    newTask.user = user;
     newTask.project = project;
     newTask.status= task.status as StatusEnum;
     await this.projectService.getProjectById(task.projectID);
