@@ -2,7 +2,7 @@ import {ApiBearerAuth, ApiBody, ApiTags} from "@nestjs/swagger";
 import {
     Body,
     ClassSerializerInterceptor,
-    Controller, Get,
+    Controller, Delete, Get, HttpException,
     Inject, Param,
     Post, Put,
     Req,
@@ -55,5 +55,17 @@ export class UserProjectController {
     @UseInterceptors(ClassSerializerInterceptor)
     private async getRole(@Param('projectId') projectId: number, @Req() { user }: Request): Promise<RoleEnum> {
         return this.service.getRole(projectId, <User>user);
+    }
+
+    @Delete('project/:projectId/user/:userId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async deleteUserOfProject (
+        @Param('projectId') projectId: number,
+        @Param('userId') userId: number,
+        @Req() { user }: Request
+    ): Promise<HttpException> {
+        return this.service.deleteUserOfProject(projectId, userId, <User>user);
     }
 }
