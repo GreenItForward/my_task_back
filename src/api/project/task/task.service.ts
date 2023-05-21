@@ -81,8 +81,9 @@ export class TaskService {
 
     if(task.userID && this.userProjectService.isInProject(task.projectID, user)) {
       existingTask.user = await this.userService.getUserById(task.userID);
+    }else{
+      existingTask.user = null;
     }
-    
     existingTask.deadline = task.deadline;
   
     return this.repository.save(existingTask);
