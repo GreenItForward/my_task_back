@@ -5,7 +5,7 @@ import { ProjectService } from './project.service';
 import { Project } from './project.entity';
 import { CreateProjectDto } from './project.dto';
 import { UserService } from '../user/user.service';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
 
 @ApiTags('Project')
@@ -19,7 +19,7 @@ export class ProjectController {
 
     @Get('user')
     @ApiBearerAuth()
-    
+    @ApiOperation({ summary: 'Get all projects by user' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     public async getAllByUser(@Req() { user }: Request): Promise<Project[]> {
@@ -28,6 +28,7 @@ export class ProjectController {
 
     @Post()
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Create project' })
     @ApiBody({ type: CreateProjectDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
@@ -38,6 +39,7 @@ export class ProjectController {
     
     @Post('update/:projectId')
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update project' })
     @ApiBody({ type: CreateProjectDto })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
@@ -45,12 +47,22 @@ export class ProjectController {
         return this.service.update(projectId, body, <User>user);
     }
 
-    @Delete(':projectId')
+    @Delete('delete/:projectId')
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Delete project' })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     private async delete(@Param("projectId") projectId : number, @Req() { user }: Request): Promise<HttpException> {
         return this.service.deleteByid(projectId, <User>user);
+    }
+
+    @Delete('leave/:projectId')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Leave project' })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    private async leave(@Param("projectId") projectId : number, @Req() { user }: Request): Promise<HttpException> {
+        return this.service.leave(projectId, <User>user);
     }
 
    
