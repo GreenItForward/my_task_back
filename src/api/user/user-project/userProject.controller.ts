@@ -40,7 +40,7 @@ export class UserProjectController {
     private async changeRole(@Body() body:ChangeRoleDto, @Req() { user }: Request): Promise<RoleEnum | never> {
         return this.service.changeRole(body, <User>user);
     }
-
+  
     @Get('get-users-by-project/:projectId')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
