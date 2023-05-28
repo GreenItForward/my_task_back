@@ -1,20 +1,27 @@
-import { User } from '@/api/user/user.entity';
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Project } from './project.entity';
-import { CreateProjectDto } from './project.dto';
+import {User} from '@/api/user/user.entity';
+import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import {Project} from './project.entity';
+import {CreateProjectDto} from './project.dto';
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {RoleEnum} from "@/common/enums/role.enum";
+import { UserProjectService } from '../user/user-project/userProject.service';
+import { Label } from './label/label.entity';
 
 @Injectable()
 export class ProjectService {
-  @InjectRepository(Project)
-  private readonly projectRepo: Repository<Project>;
-  @InjectRepository(User)
-  private readonly userRepo: Repository<User>;
-  @InjectRepository(UserProject)
-  private readonly userProjectRepo: Repository<UserProject>;
+  constructor(
+    @InjectRepository(Project)
+    private readonly projectRepo: Repository<Project>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+    @InjectRepository(UserProject)
+    private readonly userProjectRepo: Repository<UserProject>,
+    @InjectRepository(Label)
+    private readonly labelRepo: Repository<Label>,
+    private readonly userProjectService: UserProjectService
+  ) {}
 
   public async getAll(): Promise<Project[]> {
     return this.projectRepo.find();
@@ -39,10 +46,10 @@ export class ProjectService {
   }
 
   public async update(projectId:number, body: CreateProjectDto, user: User): Promise<HttpException> {
-    const project = await this.getProjectById(projectId);    
-
-    if (project.user.id !== user.id) {
-      throw new NotFoundException('Vous n\'avez pas les droits pour modifier ce projet.');
+    const project = await this.getProjectById(projectId);   
+        
+    if(await this.userProjectService.isInProject(project.id, user) === false) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet auquel vous ne participez pas.');
     }
 
     project.nom = !body.nom ? project.nom : body.nom;
@@ -51,6 +58,22 @@ export class ProjectService {
     this.projectRepo.save(project);
 
     return new HttpException('Le projet a bien été modifié.', HttpStatus.OK);
+  }
+
+  public async leave(projectId:number, user: User): Promise<HttpException> {
+    const project = await this.getProjectById(projectId);
+
+    if (project.user.id === user.id) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet dont vous êtes le créateur.');
+    }    
+
+    if(await this.userProjectService.isInProject(project.id, user) === false) {
+      throw new NotFoundException('Vous ne pouvez pas quitter un projet auquel vous ne participez pas.');
+    }
+
+    await this.userProjectRepo.delete({ project: { id: project.id }, user: { id: user.id } });
+
+    return new HttpException('Vous avez bien quitté le projet.', HttpStatus.OK);
   }
 
   public async generateCodeJoin(): Promise<string> {
@@ -89,14 +112,28 @@ export class ProjectService {
 
   public async getAllByUser(user: User): Promise<Project[]> {
     const userId = user.id;
-    const projects = await this.projectRepo.find({ where: { user: { id: userId } }, relations: ['user'] });
+    const userProjects = await this.userProjectRepo.find({ where: { user: { id: userId } }, relations: ['project'] });
   
-    if (!projects || projects.length === 0) {
+    if (!userProjects || userProjects.length === 0) {
       throw new NotFoundException('Aucun projet trouvé.');
     }
-  
-    return projects;
+    return userProjects.map(userProject => userProject.project);
+  }
+
+  public async deleteByid(id: number, user: User): Promise<HttpException> {
+    const project = await this.getProjectById(id);
+
+    if (project.user.id !== user.id) {
+      throw new NotFoundException('Vous n\'avez pas les droits pour supprimer ce projet.');
+    }
+
+    const labels = await this.labelRepo.find({ where: { project: { id: project.id } } });
+
+    await Promise.all(labels.map(label => this.labelRepo.delete(label.id)));
+    
+    await this.projectRepo.delete(id);
+
+    return new HttpException('Le projet a bien été supprimé.', HttpStatus.OK);
   }
   
-
 }

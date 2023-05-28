@@ -1,5 +1,5 @@
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Module} from "@nestjs/common";
+import {Module, forwardRef} from "@nestjs/common";
 import {UserProject} from "@/api/user/user-project/userProject.entity";
 import {AuthModule} from "@/api/user/auth/auth.module";
 import {UserProjectController} from "@/api/user/user-project/userProject.controller";
@@ -12,7 +12,7 @@ import {ProjectModule} from "@/api/project/project.module";
     imports: [
         TypeOrmModule.forFeature([UserProject, Project, User]),
         AuthModule,
-        ProjectModule,
+        forwardRef(() => ProjectModule)
     ],
     controllers: [UserProjectController],
     providers: [UserProjectService],

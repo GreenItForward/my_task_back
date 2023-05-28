@@ -25,12 +25,12 @@ export class Task extends BaseEntity {
   status: StatusEnum;
 
   @Column({ nullable: true })
-  deadline: Date;
+  deadline: Date | null;
 
-  @Column()
-  userId: number;
+  @Column({ nullable: true })
+  userId: number | null;  
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.tasks, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -40,7 +40,7 @@ export class Task extends BaseEntity {
   @Column()
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.tasks, { nullable: false })
+  @ManyToOne(() => Project, (project) => project.tasks, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'projectId' })
   project: Project;
 
@@ -49,4 +49,5 @@ export class Task extends BaseEntity {
 
   @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task)
   taskLabels: TaskLabel[];
+  existingTask: Promise<User>;
 }

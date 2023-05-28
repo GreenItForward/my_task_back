@@ -52,7 +52,7 @@ export class AuthController {
     return this.service.refresh(<User>user);
   }
 
-  @Post('getUser')
+  @Get('getUser')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Decode token' })
   @ApiOkResponse({ status: 201, description: 'User has been send.', type: User })
