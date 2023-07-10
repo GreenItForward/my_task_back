@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './api/user/user.module';
 import { ApiModule } from './api/api.module';
 import { getEnvPath } from './common/helper/env.helper';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';

@@ -25,8 +25,14 @@ export class UserSettingService {
         }
 
         let settingRes = await this.userSettingRepo.findOneBy({user: {id: user.id}});
+        if (!settingRes) {
+            settingRes = new UserSetting();
+            settingRes.user = Promise.resolve(user);
+        }
+
+        settingRes.background = settings.background;
     
-        const savedSettings = await this.userSettingRepo.save(settings as UserSetting);
+        const savedSettings = await this.userSettingRepo.save(settingRes);
         return savedSettings;
     }
     

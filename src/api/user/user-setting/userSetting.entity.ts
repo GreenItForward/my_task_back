@@ -23,9 +23,5 @@ export class UserSetting extends BaseEntity {
 
   @Column({ nullable: true })
   @ApiProperty()
-  public backgroundColor?: string;
-
-  @Column({ nullable: true })
-  @ApiProperty()
-  public backgroundImage?: string;
+  public background!: string;
 }
