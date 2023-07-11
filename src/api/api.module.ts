@@ -6,6 +6,7 @@ import { TaskModule } from "./project/task/task.module";
 import { LabelModule } from "./project/label/label.module";
 import { TaskLabelModule } from "./project/task-label/taskLabel.module";
 import { UserProjectModule } from "@/api/user/user-project/userProject.module";
+import { UserSettingModule } from "./user/user-setting/userSetting.module";
 
 @Module({
     imports: [
@@ -15,7 +16,8 @@ import { UserProjectModule } from "@/api/user/user-project/userProject.module";
         TaskModule,
         LabelModule,
         TaskLabelModule,
-        UserProjectModule
+        UserProjectModule,
+        UserSettingModule,
     ],
     controllers: [],
     providers: [],

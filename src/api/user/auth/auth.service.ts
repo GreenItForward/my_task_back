@@ -15,7 +15,7 @@ export class AuthService {
 
   public async register(body: RegisterDto): Promise<string | never> {
     const { firstname, name, email, password }: RegisterDto = body;
-    let user: User = await this.repository.findOneBy({ email })
+    let user: User = await this.repository.findOneBy({ email });
 
     if (user) {
       throw new HttpException(`User with email ${email} already exists`, HttpStatus.BAD_REQUEST);
